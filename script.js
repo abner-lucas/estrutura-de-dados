@@ -322,6 +322,27 @@
     reposSeletor(); addEventListener('resize', reposSeletor); document.fonts && document.fonts.ready.then(reposSeletor);
     marcarUltimo();
 
+    /* ================= BUSCA NOS CÓDIGOS DAS AULAS ================= */
+    const buscaCodigos = $('#busca-codigos');
+    if (buscaCodigos) {
+        // ignora acentos e maiúsculas: "funcoes" encontra "Funções"
+        const normal = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        const itensCod = $$('#cadernos li').map((li) => ({ li, texto: normal(li.dataset.busca + ' ' + li.textContent) }));
+        const totalCod = itensCod.length;
+        buscaCodigos.addEventListener('input', () => {
+            const termos = normal(buscaCodigos.value).split(/\s+/).filter(Boolean);
+            let visiveis = 0;
+            itensCod.forEach(({ li, texto }) => {
+                const ok = termos.every((t) => texto.includes(t));
+                li.hidden = !ok;
+                if (ok) visiveis++;
+            });
+            $$('#cadernos .caderno').forEach((c) => { c.hidden = !$$('li', c).some((li) => !li.hidden); });
+            $('#codigos-contagem').textContent = termos.length ? `${visiveis} de ${totalCod} notebooks` : `${totalCod} notebooks`;
+            $('#codigos-vazio').hidden = visiveis > 0;
+        });
+    }
+
     /* ================= LABORATÓRIO DE ORDENAÇÃO ================= */
     const caixaBarras = $('#ord-barras'), estadoOrd = $('#ord-estado');
     const botaoPlay = $('#ord-play'), textoPlay = $('#ord-play-txt'), botaoPasso = $('#ord-passo');

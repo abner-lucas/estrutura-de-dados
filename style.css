@@ -548,6 +548,32 @@ html:not(.js) .etiqueta span { clip-path: none; }
 .no-links-ir { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--tinta); color: var(--fundo); font-weight: 700; transition: transform .35s var(--ease); }
 .no-links a:hover .no-links-ir { transform: rotate(45deg); background: var(--coral); color: #1d0a04; }
 
+/* ---------- códigos das aulas (cadernos do Colab) ---------- */
+.codigos-busca { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 24px; }
+.campo-claro { color: var(--tinta-2); }
+.campo-claro input[type="search"] {
+    width: min(420px, 100%); height: 48px; padding: 0 16px; border-radius: 14px; border: 2px solid var(--linha);
+    background: var(--superficie); color: var(--tinta); font: 600 .98rem var(--f-texto); transition: border-color .25s, box-shadow .25s;
+}
+.campo-claro input[type="search"]:focus { outline: none; border-color: var(--ponteiro); box-shadow: 0 0 0 4px var(--ponteiro-suave); }
+.campo-claro { flex: 1 1 280px; }
+.codigos-contagem { font: 600 .82rem var(--f-mono); color: var(--coral-tinta); }
+.cadernos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.caderno {
+    border-radius: var(--raio); background: var(--superficie); border: 1px solid var(--linha); box-shadow: var(--sombra);
+    padding: 20px; display: grid; gap: 14px; transition: border-color .3s, transform .45s var(--ease);
+}
+.caderno:hover { border-color: var(--ponteiro); }
+.caderno[hidden] { display: none; }
+.caderno-cab { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "end titulo qtd" "end assin assin"; gap: 2px 12px; align-items: center; }
+.caderno-end { grid-area: end; align-self: stretch; display: grid; place-items: center; padding: 0 10px; border-radius: 10px; background: var(--tinta); color: var(--fundo); font: 700 .78rem var(--f-mono); }
+.caderno-cab h3 { grid-area: titulo; font-size: 1.18rem; }
+.caderno-assinatura { grid-area: assin; font-size: .74rem; color: var(--ponteiro); background: none; }
+.caderno-qtd { grid-area: qtd; font: 500 .72rem var(--f-mono); color: var(--tinta-3); white-space: nowrap; }
+.caderno .no-links { margin: 0; }
+.caderno .no-links small { word-break: break-all; }
+.caderno li[hidden] { display: none; }
+
 /* ---------- laboratório: árvore binária de busca ---------- */
 .arvore { margin-top: 28px; border-radius: 26px; background: var(--palco-2); border: 1px solid var(--palco-linha); padding: 22px; display: grid; gap: 18px; scroll-margin-top: 90px; }
 .arvore-cab h3 { font-size: 1.5rem; color: var(--palco-tinta); }
@@ -626,6 +652,7 @@ html:not(.js) .etiqueta span { clip-path: none; }
     .ord-leituras { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .ord-msg { grid-column: 1 / -1; }
     .arv-leituras { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cadernos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .aviso:first-child::before { right: auto; left: 28px; top: -22px; }
     .mural { padding-top: 22px; }
 }
@@ -679,6 +706,8 @@ html:not(.js) .etiqueta span { clip-path: none; }
     .ord-vel { width: 100%; }
     .ord-leituras b { font-size: 1.3rem; }
     .arvore { padding: 14px; }
+    .cadernos { grid-template-columns: 1fr; }
+    .caderno { padding: 16px; }
     .arv-no text { font-size: 13px; }
     .ord-leituras div { padding: 10px 12px; }
     .trilha { padding-left: 38px; }

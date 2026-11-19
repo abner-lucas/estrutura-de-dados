@@ -45,7 +45,8 @@ estrutura-de-dados/
 | **Abertura** | Visualizador de **pilha, fila e lista ligada**: insira e remova valores e veja o custo de cada operação. |
 | **Avisos** | Mural de comunicados da turma, empilhado como uma pilha. |
 | **Atividades** | Aula de árvores binárias (apresentação, simulador e exercícios no Colab), códigos das aulas práticas no **Google Colab** e laboratórios, com filtro. |
-| **Materiais** | Tabela com apresentação, notebooks e laboratórios. |
+| **Códigos** | Os notebooks das aulas no **Google Colab**, agrupados por conteúdo (funções e recursão, cadeias de caracteres, vetores/matrizes/registros, listas/pilhas/filas, hash, árvores), com busca que ignora acentos. |
+| **Materiais** | Tabela com apresentação, simulador, códigos e laboratórios. |
 | **Laboratório** | **Ordenação passo a passo** (bolha, seleção, inserção) e **árvore binária de busca** (inserção, busca e percursos). |
 | **Trilha** | Os tópicos da disciplina encadeados: vetores e matrizes → listas encadeadas → pilhas e filas → recursão → árvores → busca e ordenação. |
 
@@ -56,7 +57,7 @@ estrutura-de-dados/
 O `index.html` traz comentários `COMO ADICIONAR...` em cada seção. Em resumo:
 
 1. **Aviso** → copie um `<li class="aviso">` para o topo da lista e altere a data, o tipo (`data-tipo="info"`, `"prazo"` ou `"ok"`) e o texto.
-2. **Notebook do Colab** → no cartão “Códigos no Google Colab”, copie um `<li>` de `<ul class="no-links">` e troque o link, o título e a data. Confira no Colab se o compartilhamento está como “Qualquer pessoa com o link”.
+2. **Notebook do Colab** → na seção `#codigos`, copie um `<li>` do grupo certo e troque o título, o nome do arquivo, o link (`https://colab.research.google.com/drive/ID`) e as palavras de `data-busca`. Confira no Colab se o compartilhamento está como “Qualquer pessoa com o link”. Se for um dos mais recentes, troque também os dois links de destaque do cartão “Códigos no Google Colab” e atualize a contagem de notebooks nos textos.
 3. **Atividade ou aula** → copie um `<article class="no-card">` e defina `data-categoria` como `aula`, `codigo` ou `pratica`. O último cartão usa `NULL` no lugar de `próx`.
 4. **Material (PDF)** → coloque o arquivo em `docs/` e copie uma linha `<tr>` da tabela de materiais.
 5. Se alterar `style.css`, `script.js` ou `logica.js`, troque o número `?v=...` nos links do `index.html` (ex.: `?v=2026.11.20`) para o navegador dos alunos baixar a versão nova.
