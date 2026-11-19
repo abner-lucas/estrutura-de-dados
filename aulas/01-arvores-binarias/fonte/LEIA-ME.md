@@ -2,7 +2,7 @@
 
 Fonte da apresentação publicada em `../index.html` (com os vídeos e imagens em `../media`).
 A identidade visual foi ajustada para a do portal de Estrutura de Dados
-(`ferramentas/aplicar-identidade.cjs` registra a troca de paleta feita a partir do modelo original).
+(`../../../ferramentas/aplicar-identidade.cjs` registra a troca de paleta feita a partir do modelo original).
 
 Requer Node.js. Na primeira vez: `npm install`.
 

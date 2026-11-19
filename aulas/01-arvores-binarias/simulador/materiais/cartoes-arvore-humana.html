@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cartões · Árvore humana</title>
+<style>
+  @page { size: A4; margin: 8mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif; color: #1B1B1B; }
+  .page { width: 194mm; height: 281mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6mm; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .card { border: 1.2mm solid #385724; border-radius: 6mm; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 6mm; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 9mm; background: #385724; }
+  .tag { position: relative; color: #fff; font-weight: 800; font-size: 11pt; letter-spacing: .5pt; margin-top: -4mm; }
+  .num { font-size: 150pt; font-weight: 800; line-height: 1; color: #385724; }
+  .arms { width: 100%; display: flex; justify-content: space-between; font-size: 13pt; font-weight: 700; color: #4E7A33; }
+  .arms span { border-top: 0.6mm dashed #70AD47; padding-top: 2mm; }
+  .card.none { border-color: #F7A21B; border-style: dashed; }
+  .card.none::before { background: #F7A21B; }
+  .card.none .num { color: #B26B00; font-size: 80pt; font-family: Consolas, monospace; }
+  .card.raiz { border-color: #1F3864; }
+  .card.raiz::before { background: #1F3864; }
+  .card.raiz .num { color: #1F3864; font-size: 40pt; font-family: Consolas, monospace; text-align: center; }
+  .card.call { border-color: #2F6FB2; }
+  .card.call::before { background: #2F6FB2; }
+  .call-body { font-family: Consolas, monospace; font-size: 24pt; font-weight: 700; color: #2F6FB2; text-align: center; line-height: 2.1; }
+  .call-body b { display: inline-block; border-bottom: 0.6mm solid #2F6FB2; min-width: 32mm; }
+  .hint { font-size: 11pt; color: #5B6658; text-align: center; }
+</style>
+</head>
+<body>
+  <!-- 12 números: os 7 do código da aula + 5 para a segunda rodada -->
+  <div class="page">
+    <div class="card"><div class="tag">NÓ · 1º</div><div class="num">45</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · 2º</div><div class="num">20</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · 3º</div><div class="num">60</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · 4º</div><div class="num">10</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+  </div>
+  <div class="page">
+    <div class="card"><div class="tag">NÓ · 5º</div><div class="num">30</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · 6º</div><div class="num">50</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · 7º</div><div class="num">70</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · RODADA 2</div><div class="num">35</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+  </div>
+  <div class="page">
+    <div class="card"><div class="tag">NÓ · RODADA 2</div><div class="num">55</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · RODADA 2</div><div class="num">25</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · RODADA 2</div><div class="num">65</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+    <div class="card"><div class="tag">NÓ · RODADA 2</div><div class="num">45</div><div class="arms"><span>← menor</span><span>maior ou igual →</span></div></div>
+  </div>
+  <!-- None, raiz_completa e cartões de chamada (pilha) -->
+  <div class="page">
+    <div class="card raiz"><div class="tag">VARIÁVEL</div><div class="num">raiz_<br>completa</div><div class="hint">Aponte para quem é a raiz. Começa apontando para o chão (None).</div></div>
+    <div class="card none"><div class="tag">VAGA VAZIA</div><div class="num">None</div><div class="hint">Segure embaixo de um nó onde ainda não há filho.</div></div>
+    <div class="card none"><div class="tag">VAGA VAZIA</div><div class="num">None</div><div class="hint">Segure embaixo de um nó onde ainda não há filho.</div></div>
+    <div class="card none"><div class="tag">VAGA VAZIA</div><div class="num">None</div><div class="hint">Segure embaixo de um nó onde ainda não há filho.</div></div>
+  </div>
+  <div class="page">
+    <div class="card call"><div class="tag">CHAMADA NA PILHA · 1</div><div class="call-body">inserir(<br>raiz=<b>&nbsp;</b>,<br>valor=<b>&nbsp;</b>)</div><div class="hint">Escreva a lápis. Fique na fila da pilha até a chamada de cima devolver o resultado.</div></div>
+    <div class="card call"><div class="tag">CHAMADA NA PILHA · 2</div><div class="call-body">inserir(<br>raiz=<b>&nbsp;</b>,<br>valor=<b>&nbsp;</b>)</div><div class="hint">Escreva a lápis. Fique na fila da pilha até a chamada de cima devolver o resultado.</div></div>
+    <div class="card call"><div class="tag">CHAMADA NA PILHA · 3</div><div class="call-body">inserir(<br>raiz=<b>&nbsp;</b>,<br>valor=<b>&nbsp;</b>)</div><div class="hint">Escreva a lápis. Fique na fila da pilha até a chamada de cima devolver o resultado.</div></div>
+    <div class="card call"><div class="tag">CHAMADA NA PILHA · 4</div><div class="call-body">inserir(<br>raiz=<b>&nbsp;</b>,<br>valor=<b>&nbsp;</b>)</div><div class="hint">Escreva a lápis. Fique na fila da pilha até a chamada de cima devolver o resultado.</div></div>
+  </div>
+</body>
+</html>

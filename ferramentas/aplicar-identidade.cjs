@@ -1,6 +1,7 @@
 // Aplica a identidade visual do portal de Estrutura de Dados à apresentação.
 // Troca a paleta verde do modelo IFPA/Canva pela paleta do portal (azul-marinho,
-// petróleo, ciano e coral). Rode uma vez: node ferramentas/aplicar-identidade.cjs
+// petróleo, ciano e coral). Uso: node ferramentas/aplicar-identidade.cjs <pasta src>
+// Ex.: node ferramentas/aplicar-identidade.cjs aulas/01-arvores-binarias/simulador/fonte/src
 // Ele é idempotente: rodar de novo não muda nada.
 const fs = require('fs');
 const path = require('path');
@@ -21,6 +22,10 @@ const PALETA = {
     '#4A5547': '#46566C', '#98A393': '#7E8EA5', '#9AA59A': '#7E8EA5', '#7C8B78': '#6B7A8F',
     '#9AA39A': '#8A97A8', '#C9D1C6': '#D2DAE5', '#DDE3DA': '#D2DAE5', '#9FB7A6': '#9DB0C9',
     '#1FA54A': '#1F8A4C', '#138A42': '#1F8A4C',
+    // cores extras do simulador
+    '#FFF4DE': '#FFEDE7', '#8A5300': '#9A3412', '#F3F6F1': '#EEF2F6', '#FAFCF9': '#F8FAFC',
+    '#E7EAE5': '#E2E8F0', '#D8E2D2': '#D2DAE5', '#5E7766': '#5B6B80', '#5B6658': '#46566C',
+    '#6F8C78': '#6B7A8F', '#0F1712': '#0A101B',
 };
 const RGBA = [
     [/rgba\(\s*56\s*,\s*87\s*,\s*36\s*,/g, 'rgba(15,27,45,'],
@@ -30,7 +35,8 @@ const RGBA = [
     [/rgba\(\s*247\s*,\s*162\s*,\s*27\s*,/g, 'rgba(255,106,69,'],
 ];
 
-const raiz = path.join(__dirname, '..', 'src');
+if (!process.argv[2]) { console.error('Informe a pasta src. Ex.: node ferramentas/aplicar-identidade.cjs aulas/01-arvores-binarias/fonte/src'); process.exit(1); }
+const raiz = path.resolve(process.argv[2]);
 const arquivos = [];
 (function varrer(d) {
     for (const n of fs.readdirSync(d)) {

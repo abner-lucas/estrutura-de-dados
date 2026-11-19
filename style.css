@@ -534,7 +534,7 @@ html:not(.js) .etiqueta span { clip-path: none; }
 
 /* ---------- links do Colab dentro do cartão ---------- */
 .no-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
-.no-acoes .botao { margin-top: 0; }
+.no-acoes .botao, .no-links + .botao { margin-top: 0; }
 .no-links { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 10px; }
 .no-links a {
     display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px;

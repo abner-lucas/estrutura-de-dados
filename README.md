@@ -23,12 +23,17 @@ estrutura-de-dados/
 ├── logica.js         # Lógica pura: pilha, fila, lista ligada, ordenação e árvore binária de busca
 ├── script.js         # Interface: tema, rolagem, visualizadores, filtro e laboratórios
 ├── testes/           # Testes da lógica: node --test testes/logica.test.js
+├── ferramentas/      # aplicar-identidade.cjs: aplica a paleta do portal a um projeto React (src/)
 ├── docs/             # PDFs da disciplina (plano, listas, apostilas)
 └── aulas/
     └── 01-arvores-binarias/      # Apresentação da aula de árvores binárias de busca
         ├── index.html            # Apresentação pronta (gerada pelo build)
         ├── media/                # Vídeos e imagens renderizados com Remotion
-        └── fonte/                # Código-fonte da apresentação (React + Remotion)
+        ├── fonte/                # Código-fonte da apresentação (React + Remotion)
+        └── simulador/            # Simulador da ABB: executa o código Python da aula linha por linha
+            ├── index.html        # Simulador pronto (gerado pelo build)
+            ├── materiais/        # Exercícios do aluno (.ipynb) e cartões da árvore humana (PDF/HTML)
+            └── fonte/            # Código-fonte do simulador (React + Vite)
 ```
 
 ---
@@ -39,7 +44,7 @@ estrutura-de-dados/
 |---|---|
 | **Abertura** | Visualizador de **pilha, fila e lista ligada**: insira e remova valores e veja o custo de cada operação. |
 | **Avisos** | Mural de comunicados da turma, empilhado como uma pilha. |
-| **Atividades** | Aula de árvores binárias (apresentação), códigos das aulas práticas no **Google Colab** e laboratórios, com filtro. |
+| **Atividades** | Aula de árvores binárias (apresentação, simulador e exercícios no Colab), códigos das aulas práticas no **Google Colab** e laboratórios, com filtro. |
 | **Materiais** | Tabela com apresentação, notebooks e laboratórios. |
 | **Laboratório** | **Ordenação passo a passo** (bolha, seleção, inserção) e **árvore binária de busca** (inserção, busca e percursos). |
 | **Trilha** | Os tópicos da disciplina encadeados: vetores e matrizes → listas encadeadas → pilhas e filas → recursão → árvores → busca e ordenação. |
@@ -73,6 +78,21 @@ npm run build        # atualiza ../index.html (a apresentação publicada)
 ```
 
 Conteúdo dos slides: `src/deck.tsx` · Animações: `src/remotion/` · Lógica da ABB: `src/bst.ts` · Cores e fontes: `src/theme.ts` e `src/styles.css`.
+
+## 🧮 Simulador de árvore binária de busca
+
+Em `aulas/01-arvores-binarias/simulador/`. Executa, linha por linha, o código Python da aula (`inserir`, `buscar`, `em_ordem`, `pre_ordem`, `pos_ordem`), mostrando a árvore, a linha atual, a pilha de chamadas, as variáveis e a saída do `print`, com perguntas de previsão e uma aba de desafios.
+
+Links prontos para a turma (também gerados pelo botão **⚙ Professor → Copiar link**):
+
+- `?numeros=45,20,60,10,30,50,70`: lista usada no script
+- `&busca=30`: valor de `valor_teste`
+- `&perguntas=nenhuma|essenciais|todas`: nível das perguntas de previsão
+- `&modo=desafios`: abre direto na aba de desafios
+
+Os exercícios do aluno abrem direto no Colab a partir deste repositório. O notebook do professor (com gabarito) **não** fica no repositório, que é público.
+
+Para editar, dentro de `aulas/01-arvores-binarias/simulador/fonte/`: `npm install`, depois `npm run dev` (edição) ou `npm run build` (atualiza `../index.html`). Código da aula: `src/code.ts` · Execução e perguntas: `src/tracer.ts` · Árvore animada: `src/TreeView.tsx`.
 
 ---
 

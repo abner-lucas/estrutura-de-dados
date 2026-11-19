@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2026.11.19b">
+    <link rel="stylesheet" href="style.css?v=2026.11.19c">
 </head>
 <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -184,8 +184,8 @@
                         <time class="aviso-data" datetime="2026-11-19"><b>19</b> nov 2026</time>
                         <div class="aviso-corpo">
                             <span class="aviso-tipo">Novos conteúdos</span>
-                            <h3>Códigos no Colab e aula de árvores binárias</h3>
-                            <p>Os códigos das aulas práticas (listas encadeadas e hashing) estão em <a href="#atividades">Atividades</a>, com link direto para o Google Colab. A aula de árvores binárias também ganhou um laboratório: insira valores, busque e percorra a árvore.</p>
+                            <h3>Árvores binárias: apresentação, simulador e exercícios</h3>
+                            <p>A aula de árvores binárias está completa em <a href="#atividades">Atividades</a>: a apresentação, o <a href="aulas/01-arvores-binarias/simulador/">simulador</a> que executa o código Python linha por linha e os exercícios no Google Colab. Os códigos das aulas práticas de listas encadeadas e hashing também estão lá.</p>
                         </div>
                     </li>
                     <li class="aviso" data-tipo="info">
@@ -239,15 +239,30 @@
                                 <span class="no-cat">aula · árvores</span>
                             </div>
                             <h3>Árvores binárias</h3>
-                            <p>Raiz, nós, folhas e subárvores esquerda e direita. Na árvore binária de busca, os menores ficam à esquerda e os maiores à direita, e é isso que torna a busca rápida. Assista à apresentação da aula e depois pratique no laboratório.</p>
+                            <p>Raiz, nós, folhas e subárvores esquerda e direita. Na árvore binária de busca, os menores ficam à esquerda e os maiores à direita, e é isso que torna a busca rápida. Assista à apresentação, acompanhe o código no simulador e resolva os exercícios.</p>
                             <ul class="no-tags"><li>Raiz &amp; folhas</li><li>Busca O(h)</li><li>Percursos</li></ul>
-                            <div class="no-acoes">
-                                <a href="aulas/01-arvores-binarias/" class="botao botao-cheio">
-                                    Abrir apresentação
-                                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" /></svg>
-                                </a>
-                                <a href="#arvore" class="botao botao-linha">Praticar</a>
-                            </div>
+                            <ul class="no-links">
+                                <li>
+                                    <a href="aulas/01-arvores-binarias/">
+                                        <span class="no-links-txt"><strong>Apresentação da aula</strong><small>slides animados · ← → navegam</small></span>
+                                        <span class="no-links-ir" aria-hidden="true">→</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="aulas/01-arvores-binarias/simulador/">
+                                        <span class="no-links-txt"><strong>Simulador passo a passo</strong><small>o código Python executando, linha por linha</small></span>
+                                        <span class="no-links-ir" aria-hidden="true">→</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://colab.research.google.com/github/abner-lucas/estrutura-de-dados/blob/main/aulas/01-arvores-binarias/simulador/materiais/exercicios-abb-aluno.ipynb" target="_blank" rel="noopener noreferrer">
+                                        <span class="no-links-txt"><strong>Exercícios no Colab</strong><small>notebook do aluno · Python</small></span>
+                                        <span class="no-links-ir" aria-hidden="true">↗</span>
+                                        <span class="sr-only">(abre o Google Colab em nova aba)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <a href="#arvore" class="botao botao-linha">Praticar aqui no portal</a>
                         </div>
                         <span class="no-prox" aria-hidden="true">próx</span>
                     </article>
@@ -271,6 +286,13 @@
                                 <li>
                                     <a href="https://colab.research.google.com/drive/1gi2oXQX2JHpepk0cnlJdIETvv4-Od0U6" target="_blank" rel="noopener noreferrer">
                                         <span class="no-links-txt"><strong>Praticando hashing</strong><small>aula prática · 10 set 2026</small></span>
+                                        <span class="no-links-ir" aria-hidden="true">↗</span>
+                                        <span class="sr-only">(abre o Google Colab em nova aba)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://colab.research.google.com/github/abner-lucas/estrutura-de-dados/blob/main/aulas/01-arvores-binarias/simulador/materiais/exercicios-abb-aluno.ipynb" target="_blank" rel="noopener noreferrer">
+                                        <span class="no-links-txt"><strong>Exercícios · Árvore binária de busca</strong><small>aula de árvores binárias</small></span>
                                         <span class="no-links-ir" aria-hidden="true">↗</span>
                                         <span class="sr-only">(abre o Google Colab em nova aba)</span>
                                     </a>
@@ -335,31 +357,49 @@
                                 <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[1]</span>COLAB-01</td>
+                                <td class="hash-chave"><span>[1]</span>SIM-01</td>
+                                <td><strong>Simulador de árvore binária de busca</strong><span>Executa o código Python da aula linha por linha: árvore, pilha de chamadas, variáveis e saída do print, com perguntas de previsão e desafios.</span></td>
+                                <td class="hash-fmt">interativo</td>
+                                <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/simulador/">abrir</a></td>
+                            </tr>
+                            <tr>
+                                <td class="hash-chave"><span>[2]</span>COLAB-03</td>
+                                <td><strong>Exercícios · Árvore binária de busca</strong><span>Notebook do aluno com o código da aula e exercícios. Salve uma cópia no seu Drive para editar.</span></td>
+                                <td class="hash-fmt">Colab · Python</td>
+                                <td class="hash-acao"><a class="link-abrir" href="https://colab.research.google.com/github/abner-lucas/estrutura-de-dados/blob/main/aulas/01-arvores-binarias/simulador/materiais/exercicios-abb-aluno.ipynb" target="_blank" rel="noopener noreferrer">abrir<span class="sr-only"> no Google Colab (nova aba)</span></a></td>
+                            </tr>
+                            <tr>
+                                <td class="hash-chave"><span>[3]</span>CART-01</td>
+                                <td><strong>Cartões da árvore humana</strong><span>Cartões para imprimir da dinâmica em sala: cada estudante vira um nó da árvore.</span></td>
+                                <td class="hash-fmt">PDF</td>
+                                <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/simulador/materiais/cartoes-arvore-humana.pdf" target="_blank" rel="noopener noreferrer">abrir</a></td>
+                            </tr>
+                            <tr>
+                                <td class="hash-chave"><span>[4]</span>COLAB-01</td>
                                 <td><strong>Praticando listas encadeadas</strong><span>Notebook da aula prática no Google Colab.</span></td>
                                 <td class="hash-fmt">Colab · Python</td>
                                 <td class="hash-acao"><a class="link-abrir" href="https://colab.research.google.com/drive/1gam0BepX1Y_SDAF9RjcFqB5qK3qfywkA" target="_blank" rel="noopener noreferrer">abrir<span class="sr-only"> no Google Colab (nova aba)</span></a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[2]</span>COLAB-02</td>
+                                <td class="hash-chave"><span>[5]</span>COLAB-02</td>
                                 <td><strong>Praticando hashing</strong><span>Notebook da aula prática no Google Colab.</span></td>
                                 <td class="hash-fmt">Colab · Python</td>
                                 <td class="hash-acao"><a class="link-abrir" href="https://colab.research.google.com/drive/1gi2oXQX2JHpepk0cnlJdIETvv4-Od0U6" target="_blank" rel="noopener noreferrer">abrir<span class="sr-only"> no Google Colab (nova aba)</span></a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[3]</span>LAB-01</td>
+                                <td class="hash-chave"><span>[6]</span>LAB-01</td>
                                 <td><strong>Visualizador de pilha, fila e lista ligada</strong><span>Insira e remova valores e veja o custo de cada operação.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#inicio">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[4]</span>LAB-02</td>
+                                <td class="hash-chave"><span>[7]</span>LAB-02</td>
                                 <td><strong>Ordenação passo a passo</strong><span>Bolha, seleção e inserção no mesmo vetor, com contagem de comparações e trocas.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#laboratorio">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[5]</span>LAB-03</td>
+                                <td class="hash-chave"><span>[8]</span>LAB-03</td>
                                 <td><strong>Árvore binária de busca</strong><span>Inserção, busca e percursos pré-ordem, em ordem e pós-ordem.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#arvore">abrir</a></td>
@@ -544,7 +584,7 @@
         <p class="rodape-assinatura" aria-hidden="true">ED-PORTAL · free(memória) · MATERIAL DIDÁTICO · 2026</p>
     </footer>
 
-    <script src="logica.js?v=2026.11.19b"></script>
-    <script src="script.js?v=2026.11.19b"></script>
+    <script src="logica.js?v=2026.11.19c"></script>
+    <script src="script.js?v=2026.11.19c"></script>
 </body>
 </html>
