@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha Avaliativa · Árvore Binária de Busca no Simulador</title>
+<style>
+  :root {
+    --navy: #0F1B2D;
+    --teal: #0A7A72;
+    --teal-soft: #E3F4F2;
+    --coral: #D94E28;
+    --coral-soft: #FFF1EC;
+    --ink: #1B2432;
+    --muted: #526175;
+    --line: #CBD5E1;
+    --bg-soft: #F8FAFC;
+  }
+
+  @page {
+    size: A4;
+    margin: 11mm 12mm;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    font-size: 9.6pt;
+    line-height: 1.38;
+    color: var(--ink);
+    background: #E2E8F0;
+  }
+
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .toolbar button {
+    background: var(--coral);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .toolbar button:hover { filter: brightness(1.06); }
+
+  .sheet {
+    max-width: 210mm;
+    margin: 14px auto;
+    background: #fff;
+    padding: 12mm 13mm;
+    box-shadow: 0 6px 24px rgba(15, 27, 45, 0.14);
+  }
+
+  /* Cabeçalho */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    border-bottom: 2.2px solid var(--navy);
+    padding-bottom: 7px;
+    margin-bottom: 9px;
+  }
+  .header h1 {
+    margin: 0 0 2px;
+    font-size: 14.5pt;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+  }
+  .header .sub {
+    margin: 0;
+    font-size: 8.6pt;
+    color: var(--muted);
+  }
+  .grade-box {
+    border: 1.5px solid var(--navy);
+    border-radius: 6px;
+    padding: 4px 10px;
+    text-align: center;
+    min-width: 78px;
+    background: var(--bg-soft);
+  }
+  .grade-box small {
+    display: block;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .grade-box span {
+    font-size: 12pt;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  /* Identificação */
+  .id-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 0.9fr 0.9fr;
+    gap: 8px;
+    margin-bottom: 9px;
+    font-size: 9pt;
+  }
+  .id-field {
+    border-bottom: 1px solid #64748B;
+    padding: 3px 2px;
+  }
+  .id-field b { color: var(--navy); }
+
+  /* Contexto + Regras */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 9px;
+    margin-bottom: 10px;
+  }
+  .box {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 9px;
+    background: var(--bg-soft);
+  }
+  .box.context {
+    border-left: 3.5px solid var(--teal);
+    background: var(--teal-soft);
+  }
+  .box.rules {
+    border-left: 3.5px solid var(--coral);
+    background: var(--coral-soft);
+  }
+  .box h2 {
+    margin: 0 0 4px;
+    font-size: 9.2pt;
+    color: var(--navy);
+  }
+  .box p, .box li {
+    margin: 0;
+    font-size: 8.4pt;
+  }
+  .box ol, .box ul {
+    margin: 0;
+    padding-left: 16px;
+  }
+  .box li + li { margin-top: 2px; }
+
+  /* Tabela de pontuação */
+  .score-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    margin-bottom: 10px;
+    font-size: 7.5pt;
+    text-align: center;
+  }
+  .score-bar div {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 4px 3px;
+    background: #fff;
+  }
+  .score-bar b {
+    display: block;
+    color: var(--teal);
+    font-size: 8.4pt;
+  }
+
+  /* Seções */
+  section.part {
+    margin-bottom: 11px;
+  }
+  .part-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--navy);
+    color: #fff;
+    padding: 4.5px 9px;
+    border-radius: 5px;
+    margin-bottom: 6px;
+  }
+  .part-head h3 {
+    margin: 0;
+    font-size: 9.8pt;
+    font-weight: 700;
+  }
+  .part-head .meta {
+    font-size: 8pt;
+    opacity: 0.92;
+    font-weight: 600;
+  }
+
+  .how {
+    background: var(--bg-soft);
+    border: 1px dashed #94A3B8;
+    border-radius: 5px;
+    padding: 5px 8px;
+    margin-bottom: 7px;
+    font-size: 8.4pt;
+  }
+  .how b { color: var(--navy); }
+
+  code {
+    font-family: Consolas, 'JetBrains Mono', monospace;
+    font-size: 8.5pt;
+    background: #EEF2F6;
+    padding: 0.5px 4px;
+    border-radius: 3px;
+    color: var(--navy);
+  }
+
+  /* Caixa de desenho */
+  .draw-box {
+    border: 1.2px solid #94A3B8;
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin-bottom: 7px;
+    min-height: 44mm;
+    position: relative;
+    background:
+      radial-gradient(#CBD5E1 0.65px, transparent 0.65px);
+    background-size: 14px 14px;
+  }
+  .draw-box.compact { min-height: 35mm; }
+  .draw-label {
+    display: inline-block;
+    background: #fff;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 8.4pt;
+    font-weight: 700;
+    color: var(--navy);
+    border: 1px solid var(--line);
+  }
+
+  /* Tabelas de perguntas */
+  table.qa {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.6pt;
+    margin-bottom: 6px;
+  }
+  table.qa th {
+    background: #EDF2F7;
+    color: var(--navy);
+    text-align: left;
+    padding: 5px 6px;
+    border: 1px solid #94A3B8;
+    font-size: 8.1pt;
+  }
+  table.qa td {
+    border: 1px solid #94A3B8;
+    padding: 6px 6px;
+    vertical-align: top;
+  }
+  table.qa td.num {
+    width: 28px;
+    font-weight: 800;
+    color: var(--teal);
+    text-align: center;
+    background: #F8FAFC;
+  }
+  table.qa td.ans {
+    width: 23%;
+    height: 15mm;
+  }
+  table.qa td.why {
+    width: 22%;
+  }
+
+  /* Visto do professor */
+  .visto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid var(--coral);
+    background: var(--coral-soft);
+    border-radius: 6px;
+    padding: 5px 9px;
+    margin: 7px 0 10px;
+    font-size: 8.3pt;
+  }
+  .visto-box {
+    border: 1px solid var(--coral);
+    background: #fff;
+    border-radius: 4px;
+    padding: 3px 10px;
+    min-width: 115px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--coral);
+    font-size: 8pt;
+  }
+
+  /* Personalização */
+  .custom-codes {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 7px;
+    font-size: 8.8pt;
+  }
+  .custom-codes div {
+    flex: 1;
+    border: 1.2px solid var(--teal);
+    background: var(--teal-soft);
+    border-radius: 6px;
+    padding: 6px 8px;
+  }
+  .custom-codes span.line {
+    display: inline-block;
+    border-bottom: 1.2px solid var(--navy);
+    min-width: 46px;
+    margin-left: 4px;
+  }
+
+  /* Linhas de resposta aberta */
+  .open-q {
+    margin-bottom: 7px;
+  }
+  .open-q p {
+    margin: 0 0 3px;
+    font-size: 8.7pt;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .write-line {
+    border-bottom: 1px solid #94A3B8;
+    height: 6.5mm;
+  }
+
+  .page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .toolbar { display: none; }
+    .sheet {
+      margin: 0;
+      padding: 0;
+      max-width: none;
+      box-shadow: none;
+    }
+    section.part, .draw-box, .visto, table.qa tr {
+      break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span><strong>Ficha Avaliativa · ABB no Simulador</strong> (formatada para impressão em A4, 2 folhas frente e verso)</span>
+  <button type="button" onclick="window.print()">🖨️ Imprimir / Salvar em PDF</button>
+</div>
+
+<div class="sheet">
+  <!-- CABEÇALHO -->
+  <header class="header">
+    <div>
+      <h1>Ficha Avaliativa · Árvore Binária de Busca no Simulador</h1>
+      <p class="sub">Estrutura de Dados (TIINF0939) · Técnico em Informática · IFPA Campus Breves · Prof. Ábner Lucas</p>
+    </div>
+    <div class="grade-box">
+      <small>Nota</small>
+      <span>___ / 10</span>
+    </div>
+  </header>
+
+  <div class="id-grid">
+    <div class="id-field"><b>Nome(s):</b></div>
+    <div class="id-field"><b>Turma:</b></div>
+    <div class="id-field"><b>Data:</b> ____ / ____ / ______</div>
+  </div>
+
+  <!-- CONTEXTO PRÁTICO + REGRAS -->
+  <div class="two-col">
+    <div class="box context">
+      <h2>📦 Cenário prático: Catálogo de Estoque</h2>
+      <p>Imagine o sistema de uma loja que guarda <strong>códigos de produtos</strong> numa Árvore Binária de Busca (ABB). Regra única: <strong>código menor vai para a esquerda; maior ou igual vai para a direita</strong>. Vamos testar no simulador como o sistema cadastra, procura e ordena esses códigos.</p>
+    </div>
+    <div class="box rules">
+      <h2>🧭 Como fazer (e garantir a nota)</h2>
+      <ol>
+        <li><strong>1º sem computador:</strong> preencha <em>Minha previsão</em> (Partes A e B) e chame o professor para o <strong>Visto 1</strong>.</li>
+        <li><strong>2º no simulador:</strong> confira cada resposta.</li>
+        <li><strong>Errou? Não apague!</strong> Risque com 1 traço, anote o certo e explique em 1 frase por quê. <strong>Erro explicado vale nota cheia.</strong></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- PONTUAÇÃO VISÍVEL -->
+  <div class="score-bar" aria-label="Distribuição dos 10 pontos">
+    <div><b>2,0 pts</b>Previsões + Visto 1</div>
+    <div><b>2,0 pts</b>Conferência A e B</div>
+    <div><b>1,5 pts</b>Parte C (Seus códigos)</div>
+    <div><b>1,5 pts</b>Parte D (Ordenados)</div>
+    <div><b>2,0 pts</b>Parte E (Desafios)</div>
+    <div><b>1,0 pt</b>Parte F (Fechamento)</div>
+  </div>
+
+  <!-- PARTE A -->
+  <section class="part">
+    <div class="part-head">
+      <h3>Parte A · Montando o catálogo base</h3>
+      <span class="meta">Códigos: [45, 20, 60, 10, 30, 50, 70]</span>
+    </div>
+    <div class="how">
+      <b>Primeiro no papel:</b> desenhe a árvore e preencha <em>Minha previsão</em>. <b>Depois no simulador:</b> clique em <b>📦 Parte A–C · Base</b> (a árvore já aparece pronta com o total de nós e níveis). Para A3, digite <code>45</code> em <code>valor</code> e clique em <code>inserir</code>.
+    </div>
+
+    <div class="draw-box">
+      <span class="draw-label">A1. Desenhe a árvore final dos códigos [45, 20, 60, 10, 30, 50, 70] (comece pelo 45 na raiz):</span>
+    </div>
+
+    <table class="qa">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pergunta</th>
+          <th>Minha previsão (antes)</th>
+          <th>No simulador (depois)</th>
+          <th>Se errou, por que errou?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">A2</td>
+          <td>Quantos <strong>níveis</strong> (altura) essa árvore tem? Quais códigos são <strong>folhas</strong> (não têm filhos)?</td>
+          <td class="ans"></td>
+          <td class="ans"></td>
+          <td class="why"></td>
+        </tr>
+        <tr>
+          <td class="num">A3</td>
+          <td>Se cadastrarmos o código <code>45</code> <strong>de novo</strong>, onde ele vai parar? <em>(No simulador: digite 45 no campo valor e clique em <code>inserir</code>.)</em></td>
+          <td class="ans"></td>
+          <td class="ans"></td>
+          <td class="why"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PARTE B -->
+  <section class="part">
+    <div class="part-head">
+      <h3>Parte B · Busca rápida no caixa e relatório ordenado</h3>
+      <span class="meta">Usando a árvore da Parte A (7 códigos)</span>
+    </div>
+    <div class="how">
+      <b>No simulador (só depois do Visto 1):</b> para B1–B3, digite o código no campo <code>valor</code> e clique em <code>buscar</code>. Para B4, clique no botão <code>em_ordem</code> e observe a ordem em que os nós ficam numerados.
+    </div>
+
+    <table class="qa">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pergunta</th>
+          <th>Minha previsão (antes)</th>
+          <th>No simulador (depois)</th>
+          <th>Se errou, por que errou?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">B1</td>
+          <td>O caixa busca o produto <code>30</code>. Quais códigos são visitados, em ordem? Quantos passos foram?</td>
+          <td class="ans"></td>
+          <td class="ans"></td>
+          <td class="why"></td>
+        </tr>
+        <tr>
+          <td class="num">B2</td>
+          <td>Nessa busca pelo <code>30</code>, quantos produtos da árvore <strong>nunca precisaram ser olhados</strong>? Quais?</td>
+          <td class="ans"></td>
+          <td class="ans"></td>
+          <td class="why"></td>
+        </tr>
+        <tr>
+          <td class="num">B3</td>
+          <td>O caixa busca o produto <code>55</code> (não existe). Quais códigos são visitados até o sistema parar?</td>
+          <td class="ans"></td>
+          <td class="ans"></td>
+          <td class="why"></td>
+        </tr>
+        <tr>
+          <td class="num">B4</td>
+          <td>O gerente pede um relatório usando <code>em_ordem</code>. Qual lista sai no final?</td>
+          <td class="ans"></td>
+          <td class="ans"></td>
+          <td class="why"></td>
+        </tr>
+        <tr>
+          <td class="num">B5</td>
+          <td colspan="4"><strong>Em 1 frase (com suas palavras):</strong> por que o percurso <code>em_ordem</code> sempre devolve os códigos em ordem crescente?
+            <div class="write-line"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="visto">
+      <span><strong>🛑 PARE AQUI antes de abrir o computador!</strong> Chame o professor para conferir que <em>Minha previsão</em> (Partes A e B) está preenchida.</span>
+      <div class="visto-box">VISTO 1: ____________</div>
+    </div>
+  </section>
+
+  <!-- QUEBRA DE PÁGINA PARA A FOLHA 2 -->
+  <div class="page-break"></div>
+
+  <!-- PARTE C -->
+  <section class="part">
+    <div class="part-head">
+      <h3>Parte C · Sua árvore personalizada (2 códigos próprios)</h3>
+      <span class="meta">1,5 pts · cada dupla tem sua árvore</span>
+    </div>
+    <div class="how">
+      <b>Como fazer:</b> clique no botão <b>📦 Parte A–C · Base</b> para voltar à árvore original. Escolha <b>2 números entre 1 e 99</b> que <b>não</b> estejam nela (dica: dia do nascimento e idade, ou 2 últimos dígitos da matrícula). Digite cada um em <code>valor</code> e clique em <code>inserir</code>.
+    </div>
+
+    <div class="custom-codes">
+      <div><strong>Código 1 (X):</strong> <span class="line"></span> &nbsp; (entrou à esq. ou dir. de qual nó? <span class="line"></span>)</div>
+      <div><strong>Código 2 (Y):</strong> <span class="line"></span> &nbsp; (entrou à esq. ou dir. de qual nó? <span class="line"></span>)</div>
+    </div>
+
+    <div class="draw-box compact">
+      <span class="draw-label">C1. Desenhe a árvore base JÁ COM os seus 2 códigos novos (circule X e Y para destacar):</span>
+    </div>
+
+    <div class="open-q">
+      <p>C2. Agora clique em <code>buscar</code> para o seu <strong>Código 1 (X)</strong>. Escreva o caminho exato que o simulador percorreu e quantos nós ele visitou:</p>
+      <div class="write-line"></div>
+    </div>
+  </section>
+
+  <!-- PARTE D -->
+  <section class="part">
+    <div class="part-head">
+      <h3>Parte D · O perigo dos dados já ordenados</h3>
+      <span class="meta">1,5 pts · Cenário Ordenado</span>
+    </div>
+    <div class="how">
+      <b>Como fazer:</b> clique no botão <b>📈 Parte D · Ordenados</b> no topo do simulador (ele carrega <code>[10, 20, 30, 45, 50, 60, 70]</code> e já deixa o <code>70</code> pronto no campo <code>valor</code>). Observe a forma e os níveis, depois clique em <code>buscar</code> e em <code>em_ordem</code>.
+    </div>
+
+    <div class="draw-box compact">
+      <span class="draw-label">D1. Desenhe a forma da nova árvore quando os códigos entram em ordem crescente:</span>
+    </div>
+
+    <table class="qa">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Comparação prática</th>
+          <th>Na árvore da Parte A</th>
+          <th>Na árvore ordenada (Parte D)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">D2</td>
+          <td>Quantos <strong>níveis (altura)</strong> a árvore tem?</td>
+          <td class="ans" style="height: 9mm;"></td>
+          <td class="ans" style="height: 9mm;"></td>
+        </tr>
+        <tr>
+          <td class="num">D3</td>
+          <td>Quantos nós são visitados para achar o código <code>70</code>?</td>
+          <td class="ans" style="height: 9mm;"></td>
+          <td class="ans" style="height: 9mm;"></td>
+        </tr>
+        <tr>
+          <td class="num">D4</td>
+          <td colspan="3">A lista do <code>em_ordem</code> mudou em relação à Parte A? <strong>( &nbsp; ) Sim &nbsp; ( &nbsp; ) Não</strong>. O que piorou na prática?
+            <div class="write-line"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PARTE E -->
+  <section class="part">
+    <div class="part-head">
+      <h3>Parte E · Missões práticas na aba 🎯 Desafios</h3>
+      <span class="meta">2,0 pts · rodadas aleatórias na tela</span>
+    </div>
+    <div class="how">
+      <b>Como fazer:</b> clique em <b>🎯 Desafios</b> no topo do simulador e complete <b>1 rodada de cada desafio</b>. Anote os dados da sua rodada abaixo e mostre a tela concluída ao professor para receber o <b>Visto 2</b>. <em>(Errar durante o desafio não tira nota; o objetivo é completar!)</em>
+    </div>
+
+    <table class="qa">
+      <thead>
+        <tr>
+          <th>Missão</th>
+          <th>O que o simulador sorteou na sua rodada</th>
+          <th>Resultado final</th>
+          <th style="width: 14%;">Nº de erros</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Monte a árvore</strong></td>
+          <td style="height: 11mm;">Os 7 números:</td>
+          <td>Qual foi a raiz?</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>2. Ordem de visita</strong><br><small>(use <code>em-ordem</code>)</small></td>
+          <td style="height: 11mm;">Menor e maior nó da árvore:</td>
+          <td>Lista final gerada:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>3. Caminho da busca</strong></td>
+          <td style="height: 11mm;">Valor buscado:</td>
+          <td>Encontrou? ( ) Sim ( ) Não<br>Caminho:</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="visto">
+      <span><strong>✔ Conferência em tela:</strong> mostre o desafio concluído ao professor antes de passar para o fechamento.</span>
+      <div class="visto-box">VISTO 2: ____________</div>
+    </div>
+  </section>
+
+  <!-- PARTE F -->
+  <section class="part">
+    <div class="part-head">
+      <h3>Parte F · Para fechar (com suas palavras)</h3>
+      <span class="meta">1,0 pt · resposta autoral</span>
+    </div>
+
+    <div class="open-q">
+      <p>1. Em um estoque com 100.000 produtos, por que procurar numa ABB bem distribuída é muito mais rápido do que procurar numa lista comum?</p>
+      <div class="write-line"></div>
+    </div>
+
+    <div class="open-q">
+      <p>2. Pelo que você viu na Parte D, por que cadastrar códigos já em ordem crescente (1, 2, 3, 4...) atrapalha o desempenho da árvore?</p>
+      <div class="write-line"></div>
+    </div>
+
+    <div class="open-q">
+      <p>3. Cite <strong>uma previsão que você errou</strong> (ou uma dificuldade que teve nos Desafios) hoje e o que mudou na forma como você entende a ABB:</p>
+      <div class="write-line"></div>
+      <div class="write-line"></div>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

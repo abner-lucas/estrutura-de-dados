@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildCode, type TravKind } from './code';
-import { emptyTree, runOp, runScript, sameSlot, type Id, type Run, type Slot, type Tree } from './tracer';
+import { emptyTree, runOp, runScript, sameSlot, traverseIds, treeFrom, type Id, type Run, type Slot, type Tree } from './tracer';
 import { TreeView, slotKey, type Mark } from './TreeView';
 import { CodePanel, ConsolePanel, IfLogo, StackPanel, VarsPanel } from './panels';
 import { Challenges } from './Challenges';
 
 type Nivel = 'nenhuma' | 'essenciais' | 'todas';
+type Visao = 'foco' | 'completo';
 type Answer = { tries: number; done: boolean; ok: boolean };
+type LastOp = { kind: 'inserir' | 'buscar' | TravKind; valor?: number; antes: Tree } | null;
 
 const parseNums = (s: string | null) => {
   if (!s) return null;
@@ -15,20 +17,78 @@ const parseNums = (s: string | null) => {
 };
 const params = new URLSearchParams(location.search);
 const NIVEIS: Nivel[] = ['nenhuma', 'essenciais', 'todas'];
+const VISAO_INIT: Visao = params.get('visao') === 'completo' ? 'completo' : 'foco';
 const INIT = {
   numeros: parseNums(params.get('numeros')) ?? [45, 20, 60, 10, 30, 50, 70],
   busca: parseNums(params.get('busca'))?.[0] ?? 30,
-  nivel: (NIVEIS.includes(params.get('perguntas') as Nivel) ? params.get('perguntas') : 'essenciais') as Nivel,
+  // No Modo Foco (uso dos alunos com a ficha) as perguntas começam desligadas: quem conduz o ritmo é a ficha.
+  nivel: (NIVEIS.includes(params.get('perguntas') as Nivel) ? params.get('perguntas') : VISAO_INIT === 'foco' ? 'nenhuma' : 'essenciais') as Nivel,
   modo: params.get('modo') === 'desafios' ? 'desafios' : 'codigo',
+  visao: VISAO_INIT,
+};
+
+// Cenários da ficha avaliativa: carregam a árvore pronta com um clique.
+type CenarioId = 'base' | 'ordenado';
+const CENARIOS: Record<CenarioId, { rotulo: string; titulo: string; numeros: number[]; valor: number }> = {
+  base: { rotulo: '📦 Parte A–C · Base', titulo: 'catálogo base (Partes A, B e C)', numeros: [45, 20, 60, 10, 30, 50, 70], valor: 30 },
+  ordenado: { rotulo: '📈 Parte D · Ordenados', titulo: 'códigos cadastrados em ordem (Parte D)', numeros: [10, 20, 30, 45, 50, 60, 70], valor: 70 },
+};
+
+const alturaDe = (t: Tree) => {
+  const h = (id: Id | null): number => (id === null ? 0 : 1 + Math.max(h(t.nodes[id].esq), h(t.nodes[id].dir)));
+  return h(t.root);
 };
 
 function emptyRun(t: Tree): Run {
   return { title: 'árvore vazia', final: t, snaps: [{ line: 0, note: 'A árvore está vazia. Use "inserir" ou rode o script completo.', tree: t, stack: [], console: [], globals: {}, done: [] }] };
 }
 
+function readyRun(nums: number[], titulo: string): Run {
+  const t = treeFrom(nums);
+  return {
+    title: titulo,
+    final: t,
+    snaps: [{
+      line: 0,
+      note: `Árvore pronta com os códigos [${nums.join(', ')}]. Digite um valor e clique em inserir ou buscar, ou clique em em_ordem.`,
+      tree: t, stack: [], console: [], globals: {}, done: [],
+    }],
+  };
+}
+
+// Resumo do resultado da última operação (aparece quando a animação chega ao fim).
+function resumoDe(op: NonNullable<LastOp>, final: Tree): { ok: boolean; text: string } {
+  if (op.kind === 'buscar' || op.kind === 'inserir') {
+    const v = op.valor!;
+    const t = op.antes;
+    const caminho: number[] = [];
+    let cur = t.root;
+    let achou = false;
+    let ultimo: { valor: number; lado: string } | null = null;
+    while (cur !== null) {
+      const n = t.nodes[cur];
+      caminho.push(n.valor);
+      if (op.kind === 'buscar' && n.valor === v) { achou = true; break; }
+      const esq = n.valor > v;
+      ultimo = { valor: n.valor, lado: esq ? 'esquerda' : 'direita' };
+      cur = esq ? n.esq : n.dir;
+    }
+    if (op.kind === 'buscar') {
+      const trilha = caminho.length ? caminho.join(' → ') : '(árvore vazia)';
+      return achou
+        ? { ok: true, text: `buscar(${v}): ${trilha} · ${caminho.length} nó(s) visitado(s) · Encontrado!` }
+        : { ok: false, text: `buscar(${v}): ${trilha} → None · ${caminho.length} nó(s) visitado(s) · Não encontrado.` };
+    }
+    if (!ultimo) return { ok: true, text: `inserir(${v}): a árvore estava vazia, então ${v} virou a raiz.` };
+    return { ok: true, text: `inserir(${v}): ${caminho.join(' → ')} → entrou à ${ultimo.lado} do ${ultimo.valor} · agora são ${Object.keys(final.nodes).length} nós e ${alturaDe(final)} níveis.` };
+  }
+  const lista = traverseIds(final, op.kind).map((id) => final.nodes[id].valor);
+  return { ok: true, text: `${op.kind}(raiz) → [${lista.join(', ')}]` };
+}
+
 // ------------------------------------------------------------------ painel do professor
-function Settings({ numeros, valorTeste, nivel, onApply, onClose }: {
-  numeros: number[]; valorTeste: number; nivel: Nivel; onApply: (n: number[], v: number) => void; onClose: () => void;
+function Settings({ numeros, valorTeste, nivel, visao, onApply, onClose }: {
+  numeros: number[]; valorTeste: number; nivel: Nivel; visao: Visao; onApply: (n: number[], v: number) => void; onClose: () => void;
 }) {
   const [txt, setTxt] = useState(numeros.join(', '));
   const [vt, setVt] = useState(String(valorTeste));
@@ -42,6 +102,7 @@ function Settings({ numeros, valorTeste, nivel, onApply, onClose }: {
     u.searchParams.set('numeros', nums.join(','));
     u.searchParams.set('busca', String(v));
     u.searchParams.set('perguntas', nivel);
+    u.searchParams.set('visao', visao);
     return u.toString();
   };
   return (
@@ -55,7 +116,7 @@ function Settings({ numeros, valorTeste, nivel, onApply, onClose }: {
         </button>
         <button className="btn ghost" onClick={onClose} aria-label="Fechar">✕</button>
       </div>
-      <p className="set-help">O link abre o simulador já com esta lista, este valor de busca e o nível de perguntas atual. Até 15 números.</p>
+      <p className="set-help">O link abre o simulador já com esta lista, este valor de busca, o nível de perguntas e a visão atual (foco ou completa). Até 15 números.</p>
     </div>
   );
 }
@@ -63,13 +124,19 @@ function Settings({ numeros, valorTeste, nivel, onApply, onClose }: {
 // ------------------------------------------------------------------
 export function App() {
   const [mode, setMode] = useState(INIT.modo);
+  const [visao, setVisao] = useState<Visao>(INIT.visao);
+  const foco = visao === 'foco';
   const [numeros, setNumeros] = useState(INIT.numeros);
   const [valorTeste, setValorTeste] = useState(INIT.busca);
   const [nivel, setNivel] = useState<Nivel>(INIT.nivel);
   const code = useMemo(() => buildCode(numeros, valorTeste), [numeros, valorTeste]);
 
   const [tree, setTree] = useState<Tree>(emptyTree());
-  const [run, setRun] = useState<Run>(() => runScript(INIT.numeros, INIT.busca, buildCode(INIT.numeros, INIT.busca).L));
+  const [run, setRun] = useState<Run>(() => (INIT.visao === 'foco'
+    ? readyRun(INIT.numeros, params.get('numeros') ? 'árvore do professor' : CENARIOS.base.titulo)
+    : runScript(INIT.numeros, INIT.busca, buildCode(INIT.numeros, INIT.busca).L)));
+  const [cenario, setCenario] = useState<CenarioId | null>(INIT.visao === 'foco' && !params.get('numeros') ? 'base' : null);
+  const [lastOp, setLastOp] = useState<LastOp>(null);
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
@@ -78,7 +145,7 @@ export function App() {
   const [reveal, setReveal] = useState<Mark | null>(null);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1.5);
-  const [opVal, setOpVal] = useState('25');
+  const [opVal, setOpVal] = useState(String(INIT.busca));
   const [score, setScore] = useState({ ok: 0, total: 0 });
   const [showCfg, setShowCfg] = useState(false);
 
@@ -99,7 +166,7 @@ export function App() {
   const go = (i: number) => { setIdx(i); setFeedback(null); clearMarks(); };
 
   const start = (r: Run) => {
-    setRun(r); setTree(r.final); setIdx(0); setAnswers({}); setFeedback(null); clearMarks(); setPlaying(false);
+    setRun(r); setTree(r.final); setIdx(0); setAnswers({}); setFeedback(null); clearMarks(); setPlaying(false); setLastOp(null);
   };
 
   const next = useCallback(() => {
@@ -120,6 +187,7 @@ export function App() {
   const d0 = snap.stack.length;
   const stepOver = () => runUntil((d) => d <= d0);
   const stepOut = () => runUntil((d) => d < d0);
+  const toEnd = () => runUntil(() => false);
 
   // reprodução automática: para sozinha nas perguntas
   useEffect(() => {
@@ -192,9 +260,17 @@ export function App() {
   const op = (kind: 'inserir' | 'buscar' | TravKind) => {
     if ((kind === 'inserir' || kind === 'buscar') && val === undefined) return;
     if (kind === 'inserir' && Object.keys(tree.nodes).length >= 31) return;
+    const antes = tree;
     start(kind === 'inserir' || kind === 'buscar' ? runOp(tree, { kind, valor: val! }, code.L) : runOp(tree, { kind }, code.L));
+    setLastOp({ kind, valor: kind === 'inserir' || kind === 'buscar' ? val : undefined, antes });
   };
-  const runAll = (n = numeros, v = valorTeste) => start(runScript(n, v, buildCode(n, v).L));
+  const runAll = (n = numeros, v = valorTeste) => { setCenario(null); start(runScript(n, v, buildCode(n, v).L)); };
+  const carregar = (id: CenarioId) => {
+    const c = CENARIOS[id];
+    setNumeros(c.numeros); setValorTeste(c.valor); setOpVal(String(c.valor)); setCenario(id);
+    start(readyRun(c.numeros, c.titulo));
+  };
+  const resumo = lastOp && idx >= last ? resumoDe(lastOp, run.final) : null;
 
   // ------------------------------------------------------------ o que mostrar na árvore
   const opFrames = snap.stack.filter((f) => f.fn !== 'modulo' && f.fn !== 'init');
@@ -208,6 +284,8 @@ export function App() {
   snap.done.forEach((id, i) => { badges[id] = i + 1; });
   const waiting = snap.stack.slice(0, -1).map((f) => f.line).filter((l) => l > 0);
   const tweenMs = playing ? Math.min(520, 800 / speed) : 520;
+  const totalNos = Object.keys(snap.tree.nodes).length;
+  const niveis = alturaDe(snap.tree);
 
   if (mode === 'desafios') {
     return (
@@ -218,56 +296,89 @@ export function App() {
     );
   }
 
+  const travs: TravKind[] = foco ? ['em_ordem'] : ['em_ordem', 'pre_ordem', 'pos_ordem'];
+
   return (
     <div className="app">
-      <Header mode={mode} setMode={setMode} score={score} onCfg={() => setShowCfg(!showCfg)} />
+      <Header mode={mode} setMode={setMode} score={foco ? null : score} onCfg={() => setShowCfg(!showCfg)} />
       {showCfg && (
-        <Settings numeros={numeros} valorTeste={valorTeste} nivel={nivel} onClose={() => setShowCfg(false)}
+        <Settings numeros={numeros} valorTeste={valorTeste} nivel={nivel} visao={visao} onClose={() => setShowCfg(false)}
           onApply={(n, v) => { setNumeros(n); setValorTeste(v); runAll(n, v); setShowCfg(false); }} />
       )}
       <div className="opbar">
-        <button className="btn primary" onClick={() => runAll()}>▶ Rodar o script inteiro</button>
+        {foco ? (
+          (Object.keys(CENARIOS) as CenarioId[]).map((id) => (
+            <button key={id} className={`btn cen ${cenario === id ? 'on' : ''}`} onClick={() => carregar(id)}
+              title={`Carrega a árvore [${CENARIOS[id].numeros.join(', ')}] já pronta`}>{CENARIOS[id].rotulo}</button>
+          ))
+        ) : (
+          <button className="btn primary" onClick={() => runAll()}>▶ Rodar o script inteiro</button>
+        )}
         <span className="sep" />
         <label className="opval">valor <input value={opVal} onChange={(e) => setOpVal(e.target.value)} inputMode="numeric" aria-label="valor" /></label>
         <button className="btn" onClick={() => op('inserir')} disabled={val === undefined}>inserir</button>
         <button className="btn" onClick={() => op('buscar')} disabled={val === undefined || tree.root === null}>buscar</button>
         <span className="sep" />
-        {(['em_ordem', 'pre_ordem', 'pos_ordem'] as TravKind[]).map((k) => (
+        {travs.map((k) => (
           <button key={k} className="btn" onClick={() => op(k)} disabled={tree.root === null}>{k}</button>
         ))}
-        <span className="sep" />
-        <button className="btn ghost" onClick={() => { const t = emptyTree(); start(emptyRun(t)); }}>Limpar árvore</button>
-        <label className="nivel">Perguntas
-          <select value={nivel} onChange={(e) => setNivel(e.target.value as Nivel)}>
-            <option value="nenhuma">Desligadas</option>
-            <option value="essenciais">Essenciais</option>
-            <option value="todas">Todas (desafiador)</option>
-          </select>
-        </label>
+        {!foco && (
+          <>
+            <span className="sep" />
+            <button className="btn ghost" onClick={() => { const t = emptyTree(); setCenario(null); start(emptyRun(t)); }}>Limpar árvore</button>
+            <label className="nivel">Perguntas
+              <select value={nivel} onChange={(e) => setNivel(e.target.value as Nivel)}>
+                <option value="nenhuma">Desligadas</option>
+                <option value="essenciais">Essenciais</option>
+                <option value="todas">Todas (desafiador)</option>
+              </select>
+            </label>
+          </>
+        )}
+        <button className={`btn ghost visao-toggle ${foco ? '' : 'on'}`} onClick={() => setVisao(foco ? 'completo' : 'foco')}
+          title={foco ? 'Mostra o código Python, a pilha de chamadas, as variáveis e a saída do print' : 'Volta para a visão simplificada usada na ficha'}>
+          {foco ? '💻 Código + Pilha' : '🎯 Voltar ao Modo Foco'}
+        </button>
       </div>
 
-      <main className="main">
+      <main className={`main ${foco ? 'foco' : ''}`}>
         <div className="left">
           <section className="panel tree-panel">
-            <h3>Árvore <small>{run.title}</small></h3>
+            <h3 className="tree-head">
+              Árvore <small>{run.title}</small>
+              <span className="counters" aria-live="polite">
+                <span className="counter">nós: <b>{totalNos}</b></span>
+                <span className="counter">níveis (altura): <b>{niveis}</b></span>
+              </span>
+            </h3>
             <TreeView tree={snap.tree} pending={snap.pending} flash={snap.flash} flashKey={idx} focus={focus} stack={stackIds}
               noneSlot={noneSlot} token={token} done={snap.done} appended={snap.appended} found={snap.found} badges={badges}
               onPickNode={q?.kind === 'node' && !revealed ? answerNode : undefined}
               onPickSlot={q?.kind === 'slot' && !revealed ? answerSlot : undefined}
               wrong={wrong} reveal={reveal} tweenMs={tweenMs} emptyText="raiz_completa = None (árvore vazia)" />
-            <div className="legend">
-              <span><i className="lg focus" /> chamada atual</span>
-              <span><i className="lg stackb">2</i> chamadas na pilha</span>
-              <span><i className="lg done" /> já na lista</span>
-              <span><i className="lg pend" /> criado, não ligado</span>
-              <span><i className="lg tok">30</i> valor da chamada</span>
-            </div>
+            {foco ? (
+              <div className="legend">
+                <span><i className="lg focus" /> nó sendo comparado agora</span>
+                <span><i className="lg tok">30</i> valor inserido / procurado</span>
+                <span><i className="lg done" /> já entrou na lista (em_ordem)</span>
+                <span><i className="lg found" /> encontrado</span>
+              </div>
+            ) : (
+              <div className="legend">
+                <span><i className="lg focus" /> chamada atual</span>
+                <span><i className="lg stackb">2</i> chamadas na pilha</span>
+                <span><i className="lg done" /> já na lista</span>
+                <span><i className="lg pend" /> criado, não ligado</span>
+                <span><i className="lg tok">30</i> valor da chamada</span>
+              </div>
+            )}
           </section>
 
           <section className={`panel stepbox ${q ? 'asking' : ''}`} aria-live="polite">
+            {resumo && <div className={`resumo ${resumo.ok ? 'ok' : 'bad'}`}><span>Resultado</span>{resumo.text}</div>}
             {feedback && <div className={`fb ${feedback.ok ? 'ok' : 'bad'}`}>{feedback.text}</div>}
             <div className="note">
-              {snap.line > 0 && <span className="lntag">linha {snap.line}</span>}
+              {!foco && snap.line > 0 && <span className="lntag">linha {snap.line}</span>}
               <p>{snap.note}</p>
             </div>
             {q && (
@@ -292,8 +403,14 @@ export function App() {
             <button className="btn icon" onClick={() => go(0)} title="Voltar ao início" aria-label="Voltar ao início">⏮</button>
             <button className="btn" onClick={back} disabled={idx === 0}>◀ Voltar</button>
             <button className="btn primary big" onClick={() => next()} disabled={!canNext}>Próximo passo ▶</button>
-            <button className="btn" onClick={stepOver} disabled={!canNext} title="Executa a chamada inteira e para quando ela devolver o resultado">⤼ Pular chamada</button>
-            <button className="btn" onClick={stepOut} disabled={!canNext} title="Executa até a função atual terminar">⤴ Terminar função</button>
+            {foco ? (
+              <button className="btn" onClick={toEnd} disabled={!canNext} title="Avança até o fim da operação e mostra o resultado">⏭ Ir ao resultado</button>
+            ) : (
+              <>
+                <button className="btn" onClick={stepOver} disabled={!canNext} title="Executa a chamada inteira e para quando ela devolver o resultado">⤼ Pular chamada</button>
+                <button className="btn" onClick={stepOut} disabled={!canNext} title="Executa até a função atual terminar">⤴ Terminar função</button>
+              </>
+            )}
             <button className="btn" onClick={() => setPlaying(!playing)} disabled={!canNext && !playing}>{playing ? '⏸ Pausar' : '⏵ Reproduzir'}</button>
             <label className="speed" title="Velocidade da reprodução">🐢<input type="range" min={0.5} max={4} step={0.5} value={speed} onChange={(e) => setSpeed(+e.target.value)} />🐇</label>
             <div className="prog">
@@ -302,16 +419,20 @@ export function App() {
             </div>
           </div>
 
-          <div className="bottom">
-            <VarsPanel g={snap.globals} tree={snap.tree} />
-            <ConsolePanel lines={snap.console} />
-          </div>
+          {!foco && (
+            <div className="bottom">
+              <VarsPanel g={snap.globals} tree={snap.tree} />
+              <ConsolePanel lines={snap.console} />
+            </div>
+          )}
         </div>
 
-        <div className="right">
-          <CodePanel lines={code.lines} active={snap.line} waiting={waiting} />
-          <StackPanel stack={snap.stack} tree={snap.tree} />
-        </div>
+        {!foco && (
+          <div className="right">
+            <CodePanel lines={code.lines} active={snap.line} waiting={waiting} />
+            <StackPanel stack={snap.stack} tree={snap.tree} />
+          </div>
+        )}
       </main>
     </div>
   );

@@ -240,6 +240,24 @@ code { font-family: var(--mono); background: #EEF2F6; padding: 0 5px; border-rad
 .seg button { flex: 1; border: 1.5px solid var(--green); background: #fff; color: var(--green); font: 700 13px var(--mono); padding: 6px; border-radius: 8px; }
 .seg button.on { background: var(--green); color: #fff; }
 
+/* ---------------- Modo Foco (uso com a ficha avaliativa) */
+.main.foco { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 1200px; margin: 0 auto; }
+.main.foco .left { grid-template-rows: minmax(340px, 1fr) auto auto; }
+.btn.cen { border-color: var(--orange); color: #9A3412; }
+.btn.cen:hover:not(:disabled) { background: var(--orange-pale); }
+.btn.cen.on { background: var(--orange); border-color: var(--orange); color: var(--ink); }
+.visao-toggle { margin-left: auto; border-color: var(--line) !important; }
+.visao-toggle.on { background: var(--green-pale); }
+.tree-head { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.counters { margin-left: auto; display: inline-flex; gap: 6px; }
+.counter { text-transform: none; letter-spacing: 0; font: 600 12.5px var(--font); color: var(--green); background: var(--green-pale); padding: 3px 10px; border-radius: 12px; }
+.counter b { font-family: var(--mono); font-size: 14px; }
+.lg.found { background: #1F8A4C; }
+.resumo { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; padding: 7px 10px; border-radius: 8px; font: 700 15px var(--mono); animation: fadein .25s both; }
+.resumo span { font: 800 11px var(--font); text-transform: uppercase; letter-spacing: .6px; padding: 2px 7px; border-radius: 5px; background: rgba(0,0,0,.08); }
+.resumo.ok { background: #E3F6E8; color: #116B30; }
+.resumo.bad { background: #FFF1EC; color: #9A3412; }
+
 /* ---------------- quem pede menos movimento no sistema */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -2,3 +2,8 @@
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Materiais docentes e gabaritos (não publicar no repositório público)
+aulas/01-arvores-binarias/simulador/materiais/plano-aula-abb-simulador.md
+*gabarito*
+*professor*.ipynb
