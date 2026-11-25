@@ -21,7 +21,8 @@ estrutura-de-dados/
 ├── index.html        # 🌟 Portal principal (raiz do GitHub Pages)
 ├── style.css         # Visual: tokens claro/escuro, palco escuro, nós e ponteiros
 ├── logica.js         # Lógica pura: pilha, fila, lista ligada, ordenação e árvore binária de busca
-├── script.js         # Interface: tema, rolagem, visualizadores, filtro e laboratórios
+├── script.js         # Interface: tema, rolagem, divisores, filtro, busca, bancadas e laboratórios
+├── arvore3d.js       # Abertura: árvore binária de busca em 3D (Three.js), com plano B em SVG
 ├── testes/           # Testes da lógica: node --test testes/logica.test.js
 ├── ferramentas/      # aplicar-identidade.cjs: aplica a paleta do portal a um projeto React (src/)
 ├── docs/             # PDFs da disciplina (plano, listas, apostilas)
@@ -42,12 +43,12 @@ estrutura-de-dados/
 
 | Seção | Conteúdo |
 |---|---|
-| **Abertura** | Visualizador de **pilha, fila e lista ligada**: insira e remova valores e veja o custo de cada operação. |
+| **Abertura** | **Árvore binária de busca em 3D** que se constrói na tela: cada valor desce comparando com os nós até virar folha. Dá para girar, passar o ponteiro num nó (endereço, filhos) e inserir valores. |
 | **Avisos** | Mural de comunicados da turma, empilhado como uma pilha. |
 | **Atividades** | Aula de árvores binárias (apresentação, simulador e exercícios no Colab), códigos das aulas práticas no **Google Colab** e laboratórios, com filtro. |
 | **Códigos** | Os notebooks das aulas no **Google Colab**, agrupados por conteúdo (funções e recursão, cadeias de caracteres, vetores/matrizes/registros, listas/pilhas/filas, hash, árvores), com busca que ignora acentos. |
 | **Materiais** | Tabela com apresentação, simulador, códigos e laboratórios. |
-| **Laboratório** | **Ordenação passo a passo** (bolha, seleção, inserção) e **árvore binária de busca** (inserção, busca e percursos). |
+| **Laboratório** | Três bancadas em abas: **pilha, fila e lista ligada**, **ordenação passo a passo** (bolha, seleção, inserção) e **árvore binária de busca** (inserção, busca e percursos). Os links `#lab-lineares`, `#lab-ordenacao` e `#arvore` abrem a bancada certa. |
 | **Trilha** | Os tópicos da disciplina encadeados: vetores e matrizes → listas encadeadas → pilhas e filas → recursão → árvores → busca e ordenação. |
 
 ---

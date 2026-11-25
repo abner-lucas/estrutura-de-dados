@@ -76,11 +76,23 @@
     requestAnimationFrame(() => $('.abertura-titulo').classList.add('visivel'));
 
     /* ================= REVELAÇÃO (uma vez) ================= */
-    $$('[data-cascata]').forEach((lista) => [...lista.children].forEach((f, i) => f.style.setProperty('--i', i)));
+    $$('[data-cascata]').forEach((lista) => {
+        const filhos = [...lista.children];
+        // no mural (uma pilha) o aviso mais antigo entra primeiro, como uma sequência de push
+        const pilha = lista.classList.contains('mural');
+        filhos.forEach((f, i) => f.style.setProperty('--i', pilha ? filhos.length - 1 - i : i));
+    });
+
+    /* Divisores: o campo "próx" de uma seção aponta para a seguinte */
+    $$('.divisor').forEach((d) => {
+        d.innerHTML = `<a class="div-ligacao" href="${d.dataset.para}" tabindex="-1">
+            <span class="div-campo">próx</span><span class="div-fio"><i></i></span>
+            <span class="div-no"><b>${d.dataset.n}</b>${d.dataset.nome}<span>→</span></span></a>`;
+    });
     const revelador = new IntersectionObserver((entradas) => {
         entradas.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visivel'); revelador.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    $$('.etiqueta, [data-cascata], .titulo[data-palavras]').forEach((el) => revelador.observe(el));
+    $$('.etiqueta, [data-cascata], .titulo[data-palavras], .divisor').forEach((el) => revelador.observe(el));
 
     /* ================= ROLAGEM: cabeçalho, progresso, cenas, trilha ================= */
     const topo = $('#topo'), barra = $('#progresso-barra');
@@ -321,6 +333,54 @@
     const reposSeletor = () => posicionarCursor(seletor, $('.seletor-op[aria-pressed="true"]', seletor));
     reposSeletor(); addEventListener('resize', reposSeletor); document.fonts && document.fonts.ready.then(reposSeletor);
     marcarUltimo();
+
+    /* ================= BANCADAS DO LABORATÓRIO ================= */
+    const bancadas = $$('.bancada');
+    function abrirBancada(botao, focar) {
+        bancadas.forEach((b) => {
+            const ok = b === botao;
+            b.setAttribute('aria-selected', String(ok));
+            b.tabIndex = ok ? 0 : -1;
+            document.getElementById(b.getAttribute('aria-controls')).hidden = !ok;
+        });
+        if (focar) botao.focus();
+        // painéis escondidos não tinham tamanho: deixa abas e desenhos se medirem de novo
+        dispatchEvent(new Event('resize'));
+    }
+    bancadas.forEach((b) => b.addEventListener('click', () => abrirBancada(b)));
+    $('.bancadas')?.addEventListener('keydown', (e) => {
+        const i = bancadas.indexOf(document.activeElement);
+        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (i < 0 || d === undefined) return;
+        e.preventDefault();
+        abrirBancada(bancadas[(i + d + bancadas.length) % bancadas.length], true);
+    });
+    // links para #lab-lineares, #lab-ordenacao e #arvore abrem a bancada certa
+    function seguirEndereco(hash, rolar) {
+        const botao = bancadas.find((b) => '#' + b.getAttribute('aria-controls') === hash);
+        if (!botao) return false;
+        abrirBancada(botao);
+        if (rolar) requestAnimationFrame(() => $('#laboratorio').scrollIntoView({ behavior: reduzir.matches ? 'auto' : 'smooth' }));
+        return true;
+    }
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if (a && seguirEndereco(a.getAttribute('href'), true)) { e.preventDefault(); history.replaceState(null, '', a.getAttribute('href')); }
+    });
+    addEventListener('hashchange', () => seguirEndereco(location.hash, true));
+    if (location.hash) seguirEndereco(location.hash, true);
+
+    /* ================= CARTÕES QUE INCLINAM COM O PONTEIRO ================= */
+    if (!reduzir.matches && matchMedia('(hover: hover)').matches) {
+        $$('.no-card').forEach((c) => {
+            c.addEventListener('pointermove', (e) => {
+                const r = c.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+                c.style.transform = `perspective(900px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg) translateY(-6px)`;
+            });
+            c.addEventListener('pointerleave', () => { c.style.transform = ''; });
+        });
+    }
 
     /* ================= BUSCA NOS CÓDIGOS DAS AULAS ================= */
     const buscaCodigos = $('#busca-codigos');

@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2026.11.19d">
+    <link rel="stylesheet" href="style.css?v=2026.11.25">
 </head>
 <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -84,10 +84,14 @@
 
     <main id="conteudo">
 
-        <!-- ============ ABERTURA ============ -->
+        <!-- ============ ABERTURA: heap com árvore binária de busca em 3D ============ -->
         <section id="inicio" class="abertura">
-            <div class="abertura-grade">
-                <div class="abertura-texto">
+            <div class="heap">
+                <div class="heap-cena" id="cena3d" role="img" aria-label="Árvore binária de busca em 3D sendo construída: cada valor desce comparando com os nós até virar folha."></div>
+                <span class="heap-canto heap-canto-a" aria-hidden="true">heap · 0x1A00</span>
+                <span class="heap-canto heap-canto-b" aria-hidden="true">arraste para girar · passe o ponteiro num nó</span>
+
+                <div class="heap-texto">
                     <p class="abertura-kicker entra" style="--atraso: .05s">
                         <span>IFPA Campus Breves</span>
                         <span>Técnico em Informática</span>
@@ -97,59 +101,38 @@
                         Estrutura de <em>Dados</em>
                     </h1>
                     <p class="abertura-lede entra" style="--atraso: .45s">
-                        Avisos da turma, aulas, códigos das práticas no Google Colab e materiais da disciplina num só lugar.
-                        E, antes de abrir o editor de código, um laboratório para ver pilhas, filas, listas e árvores funcionando.
+                        Como organizar a informação para que os algoritmos sejam rápidos. Aulas, códigos no Colab, materiais e laboratórios para ver cada estrutura funcionando antes de programar.
                     </p>
                     <div class="abertura-acoes entra" style="--atraso: .6s">
-                        <a href="#atividades" class="botao botao-cheio">
+                        <a href="#atividades" class="botao botao-claro">
                             Ver atividades
                             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" /></svg>
                         </a>
-                        <a href="#laboratorio" class="botao botao-linha">Ordenar passo a passo</a>
+                        <a href="#laboratorio" class="botao botao-fantasma">Abrir o laboratório</a>
                     </div>
-                    <dl class="abertura-big-o entra" style="--atraso: .75s" aria-label="Custos das operações básicas">
-                        <div><dt>push / pop</dt><dd>O(1)</dd></div>
-                        <div><dt>busca na lista</dt><dd>O(n)</dd></div>
-                        <div><dt>ordenação simples</dt><dd>O(n²)</dd></div>
-                    </dl>
+                    <a class="agora entra" style="--atraso: .75s" href="aulas/01-arvores-binarias/">
+                        <span class="agora-rotulo">agora na disciplina</span>
+                        <span class="agora-titulo">Árvores binárias de busca</span>
+                        <span class="agora-ir" aria-hidden="true">→</span>
+                    </a>
                 </div>
 
-                <!-- VISUALIZADOR: pilha · fila · lista ligada -->
-                <figure class="memoria visualizador entra" style="--atraso: .3s" aria-labelledby="vis-legenda">
-                    <div class="memoria-barra" aria-hidden="true">
-                        <span class="memoria-pontos"><i></i><i></i><i></i></span>
-                        <span id="vis-arquivo">heap · pilha.c</span>
-                    </div>
-
-                    <div class="abas" role="tablist" aria-label="Escolha a estrutura">
-                        <span class="abas-cursor" aria-hidden="true"></span>
-                        <button type="button" role="tab" class="aba" id="aba-pilha" data-tipo="pilha" aria-selected="true" aria-controls="vis-palco">Pilha</button>
-                        <button type="button" role="tab" class="aba" id="aba-fila" data-tipo="fila" aria-selected="false" aria-controls="vis-palco" tabindex="-1">Fila</button>
-                        <button type="button" role="tab" class="aba" id="aba-lista" data-tipo="lista" aria-selected="false" aria-controls="vis-palco" tabindex="-1">Lista ligada</button>
-                    </div>
-
-                    <div class="vis-palco" id="vis-palco" role="tabpanel" aria-labelledby="aba-pilha" data-tipo="pilha">
-                        <p class="vis-rotulo vis-rotulo-a" id="vis-rotulo-a" aria-hidden="true">topo</p>
-                        <ol class="vis-nos" id="vis-nos" aria-label="Elementos da estrutura"></ol>
-                        <p class="vis-rotulo vis-rotulo-b" id="vis-rotulo-b" aria-hidden="true">base</p>
-                    </div>
-
-                    <form class="vis-controles" id="vis-form" novalidate>
-                        <label class="campo campo-valor">
-                            <span>Valor</span>
-                            <input type="text" inputmode="numeric" id="vis-valor" placeholder="0–99" maxlength="2" autocomplete="off">
-                        </label>
-                        <div class="vis-botoes" id="vis-botoes">
-                            <!-- preenchido pelo script conforme a estrutura -->
-                        </div>
+                <!-- Painel da árvore 3D: insere valores e mostra as comparações -->
+                <div class="heap-painel entra" style="--atraso: .9s">
+                    <ol class="heap-log" id="heap-log" aria-hidden="true"></ol>
+                    <p class="sr-only" id="heap-anuncio" aria-live="polite"></p>
+                    <form class="heap-form" id="heap-form" novalidate>
+                        <label class="sr-only" for="heap-valor">Valor para inserir na árvore 3D</label>
+                        <input type="text" inputmode="numeric" id="heap-valor" placeholder="0–99" maxlength="2" autocomplete="off">
+                        <button type="submit" class="botao botao-cheio">inserir()</button>
+                        <button type="button" class="botao botao-fantasma" id="heap-nova">nova árvore</button>
                     </form>
-
-                    <div class="console" aria-live="polite" id="vis-estado">
-                        <span class="console-custo" id="vis-custo">O(1)</span>
-                        <p class="console-msg" id="vis-msg">Digite um número e empilhe. Depois desempilhe e veja quem sai primeiro.</p>
-                    </div>
-                    <figcaption id="vis-legenda" class="sr-only">Visualizador de estruturas de dados: escolha pilha, fila ou lista ligada, insira e remova valores e veja o custo de cada operação.</figcaption>
-                </figure>
+                    <dl class="heap-custo">
+                        <div><dt>nós</dt><dd id="heap-n">0</dd></div>
+                        <div><dt>altura h</dt><dd id="heap-h">0</dd></div>
+                        <div><dt>busca</dt><dd>O(h)</dd></div>
+                    </dl>
+                </div>
             </div>
         </section>
 
@@ -164,11 +147,11 @@
         <!-- ============ AVISOS (uma pilha: o mais novo no topo) ============ -->
         <section id="avisos" class="secao" data-cena>
             <div class="moldura">
-                <header class="cabecalho">
+                <header class="cabecalho" data-end="0x01">
                     <div>
                         <p class="etiqueta">
                             <svg class="simbolo" viewBox="0 0 48 20" aria-hidden="true"><rect x="2" y="12" width="16" height="6" rx="1.5" /><rect x="2" y="5" width="16" height="6" rx="1.5" /><path class="s-traco" d="M22 8h12m-4-4 4 4-4 4" /><text x="37" y="12">top</text></svg>
-                            <span>0x01 · mural da turma</span>
+                            <span>mural da turma</span>
                         </p>
                         <h2 class="titulo" data-palavras>Avisos &amp; comunicados</h2>
                     </div>
@@ -201,14 +184,16 @@
             </div>
         </section>
 
+        <div class="divisor" data-para="#atividades" data-n="0x02" data-nome="Atividades" aria-hidden="true"></div>
+
         <!-- ============ ATIVIDADES ============ -->
         <section id="atividades" class="secao" data-cena>
             <div class="moldura">
-                <header class="cabecalho">
+                <header class="cabecalho" data-end="0x02">
                     <div>
                         <p class="etiqueta">
                             <svg class="simbolo" viewBox="0 0 48 20" aria-hidden="true"><rect x="2" y="3" width="14" height="14" rx="3" /><path class="s-traco" d="M17 10h10m-4-4 4 4-4 4" /><rect x="29" y="3" width="14" height="14" rx="3" /></svg>
-                            <span>0x02 · atividades</span>
+                            <span>atividades</span>
                         </p>
                         <h2 class="titulo" data-palavras>Cada atividade aponta para a próxima</h2>
                     </div>
@@ -241,7 +226,6 @@
                             </div>
                             <h3>Árvores binárias</h3>
                             <p>Raiz, nós, folhas e subárvores esquerda e direita. Na árvore binária de busca, os menores ficam à esquerda e os maiores à direita, e é isso que torna a busca rápida. Assista à apresentação, acompanhe o código no simulador e resolva os exercícios.</p>
-                            <ul class="no-tags"><li>Raiz &amp; folhas</li><li>Busca O(h)</li><li>Percursos</li></ul>
                             <ul class="no-links">
                                 <li>
                                     <a href="aulas/01-arvores-binarias/">
@@ -307,8 +291,7 @@
                                 <span class="no-cat">prática interativa · individual</span>
                             </div>
                             <h3>Laboratório: estruturas lineares e ordenação</h3>
-                            <p>Use o visualizador da abertura para prever o resultado de cada operação antes de clicar. Depois, compare quantas comparações e trocas cada algoritmo de ordenação faz no mesmo vetor.</p>
-                            <ul class="no-tags"><li>Pilha</li><li>Fila</li><li>Lista ligada</li><li>Ordenação</li></ul>
+                            <p>Use a bancada de estruturas lineares para prever o resultado de cada operação antes de clicar. Depois, compare quantas comparações e trocas cada algoritmo de ordenação faz no mesmo vetor.</p>
                             <a href="#laboratorio" class="botao botao-linha">
                                 Abrir laboratório
                                 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" /></svg>
@@ -321,18 +304,20 @@
             </div>
         </section>
 
+        <div class="divisor" data-para="#codigos" data-n="0x03" data-nome="Códigos das aulas" aria-hidden="true"></div>
+
         <!-- ============ CÓDIGOS DAS AULAS (notebooks do Google Colab) ============ -->
         <section id="codigos" class="secao" data-cena>
             <div class="moldura">
-                <header class="cabecalho">
+                <header class="cabecalho" data-end="0x03">
                     <div>
                         <p class="etiqueta">
                             <svg class="simbolo" viewBox="0 0 48 20" aria-hidden="true"><rect x="2" y="3" width="18" height="14" rx="3" /><path class="s-traco" d="M7 8l-2 2 2 2M15 8l2 2-2 2" /><path class="s-traco" d="M23 10h10m-4-4 4 4-4 4" /><rect x="36" y="5" width="10" height="10" rx="2" /></svg>
-                            <span>0x03 · códigos das aulas</span>
+                            <span>códigos das aulas</span>
                         </p>
                         <h2 class="titulo" data-palavras>Códigos das aulas no Colab</h2>
                     </div>
-                    <p class="cabecalho-desc">15 notebooks em Python, agrupados por conteúdo. Abra no navegador, rode célula por célula e use <em>Arquivo › Salvar uma cópia no Drive</em> para editar.</p>
+                    <p class="cabecalho-desc">15 notebooks em Python, guardados como numa tabela hash com encadeamento: cada conteúdo é um balde e os notebooks se ligam a ele. Abra no navegador, rode célula por célula e use <em>Arquivo › Salvar uma cópia no Drive</em> para editar.</p>
                 </header>
 
                 <!--
@@ -526,18 +511,20 @@
             </div>
         </section>
 
-        <!-- ============ MATERIAIS (uma tabela hash: chave → valor) ============ -->
+        <div class="divisor" data-para="#materiais" data-n="0x04" data-nome="Materiais" aria-hidden="true"></div>
+
+        <!-- ============ MATERIAIS (um vetor: índice → material) ============ -->
         <section id="materiais" class="secao" data-cena>
             <div class="moldura">
-                <header class="cabecalho">
+                <header class="cabecalho" data-end="0x04">
                     <div>
                         <p class="etiqueta">
                             <svg class="simbolo" viewBox="0 0 48 20" aria-hidden="true"><rect x="2" y="2" width="10" height="5" rx="1" /><rect x="2" y="8" width="10" height="5" rx="1" /><rect x="2" y="14" width="10" height="5" rx="1" /><path class="s-traco" d="M13 10.5h12m-4-4 4 4-4 4" /><rect x="27" y="6" width="18" height="9" rx="2" /></svg>
-                            <span>0x04 · tabela de materiais</span>
+                            <span>tabela de materiais</span>
                         </p>
                         <h2 class="titulo" data-palavras>Materiais &amp; PDFs</h2>
                     </div>
-                    <p class="cabecalho-desc">Como numa tabela hash: cada material tem uma chave, e a chave leva direto ao arquivo.</p>
+                    <p class="cabecalho-desc">Como num vetor: cada material tem um índice, e o índice leva direto ao arquivo.</p>
                 </header>
 
                 <!--
@@ -587,13 +574,13 @@
                                 <td class="hash-chave"><span>[5]</span>LAB-01</td>
                                 <td><strong>Visualizador de pilha, fila e lista ligada</strong><span>Insira e remova valores e veja o custo de cada operação.</span></td>
                                 <td class="hash-fmt">interativo</td>
-                                <td class="hash-acao"><a class="link-abrir" href="#inicio">abrir</a></td>
+                                <td class="hash-acao"><a class="link-abrir" href="#lab-lineares">abrir</a></td>
                             </tr>
                             <tr>
                                 <td class="hash-chave"><span>[6]</span>LAB-02</td>
                                 <td><strong>Ordenação passo a passo</strong><span>Bolha, seleção e inserção no mesmo vetor, com contagem de comparações e trocas.</span></td>
                                 <td class="hash-fmt">interativo</td>
-                                <td class="hash-acao"><a class="link-abrir" href="#laboratorio">abrir</a></td>
+                                <td class="hash-acao"><a class="link-abrir" href="#lab-ordenacao">abrir</a></td>
                             </tr>
                             <tr>
                                 <td class="hash-chave"><span>[7]</span>LAB-03</td>
@@ -611,18 +598,63 @@
         <section id="laboratorio" class="secao secao-palco" data-cena="palco">
             <div class="palco">
                 <div class="moldura">
-                    <header class="cabecalho">
+                    <header class="cabecalho" data-end="0x05">
                         <div>
                             <p class="etiqueta">
                                 <svg class="simbolo" viewBox="0 0 48 20" aria-hidden="true"><rect x="3" y="12" width="6" height="7" rx="1" /><rect x="12" y="7" width="6" height="12" rx="1" /><rect x="21" y="3" width="6" height="16" rx="1" /><path class="s-traco" d="M31 15h13m-4-4 4 4-4 4" /></svg>
-                                <span>0x05 · laboratório</span>
+                                <span>laboratório</span>
                             </p>
                             <h2 class="titulo" data-palavras>Teste antes de programar</h2>
                         </div>
-                        <p class="cabecalho-desc">Ordenação passo a passo e uma árvore binária de busca. Tente prever o próximo passo antes de clicar.</p>
+                        <p class="cabecalho-desc">Três bancadas: estruturas lineares, ordenação passo a passo e árvore de busca. Tente prever o próximo passo antes de clicar.</p>
                     </header>
 
-                    <div class="ordenacao">
+                    <div class="bancadas" role="tablist" aria-label="Bancadas do laboratório">
+                        <button type="button" role="tab" class="bancada" id="tab-lineares" aria-controls="lab-lineares" aria-selected="true"><b>01</b>Pilha · fila · lista</button>
+                        <button type="button" role="tab" class="bancada" id="tab-ordenacao" aria-controls="lab-ordenacao" aria-selected="false" tabindex="-1"><b>02</b>Ordenação</button>
+                        <button type="button" role="tab" class="bancada" id="tab-arvore" aria-controls="arvore" aria-selected="false" tabindex="-1"><b>03</b>Árvore de busca</button>
+                    </div>
+
+                    <div class="lab-painel" id="lab-lineares" role="tabpanel" aria-labelledby="tab-lineares">
+                        <!-- VISUALIZADOR: pilha · fila · lista ligada -->
+                        <figure class="memoria visualizador" aria-labelledby="vis-legenda">
+                            <div class="memoria-barra" aria-hidden="true">
+                                <span class="memoria-pontos"><i></i><i></i><i></i></span>
+                                <span id="vis-arquivo">heap · pilha.c</span>
+                            </div>
+
+                            <div class="abas" role="tablist" aria-label="Escolha a estrutura">
+                                <span class="abas-cursor" aria-hidden="true"></span>
+                                <button type="button" role="tab" class="aba" id="aba-pilha" data-tipo="pilha" aria-selected="true" aria-controls="vis-palco">Pilha</button>
+                                <button type="button" role="tab" class="aba" id="aba-fila" data-tipo="fila" aria-selected="false" aria-controls="vis-palco" tabindex="-1">Fila</button>
+                                <button type="button" role="tab" class="aba" id="aba-lista" data-tipo="lista" aria-selected="false" aria-controls="vis-palco" tabindex="-1">Lista ligada</button>
+                            </div>
+
+                            <div class="vis-palco" id="vis-palco" role="tabpanel" aria-labelledby="aba-pilha" data-tipo="pilha">
+                                <p class="vis-rotulo vis-rotulo-a" id="vis-rotulo-a" aria-hidden="true">topo</p>
+                                <ol class="vis-nos" id="vis-nos" aria-label="Elementos da estrutura"></ol>
+                                <p class="vis-rotulo vis-rotulo-b" id="vis-rotulo-b" aria-hidden="true">base</p>
+                            </div>
+
+                            <form class="vis-controles" id="vis-form" novalidate>
+                                <label class="campo campo-valor">
+                                    <span>Valor</span>
+                                    <input type="text" inputmode="numeric" id="vis-valor" placeholder="0–99" maxlength="2" autocomplete="off">
+                                </label>
+                                <div class="vis-botoes" id="vis-botoes">
+                                    <!-- preenchido pelo script conforme a estrutura -->
+                                </div>
+                            </form>
+
+                            <div class="console" aria-live="polite" id="vis-estado">
+                                <span class="console-custo" id="vis-custo">O(1)</span>
+                                <p class="console-msg" id="vis-msg">Digite um número e empilhe. Depois desempilhe e veja quem sai primeiro.</p>
+                            </div>
+                            <figcaption id="vis-legenda" class="sr-only">Visualizador de estruturas de dados: escolha pilha, fila ou lista ligada, insira e remova valores e veja o custo de cada operação.</figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="lab-painel ordenacao" id="lab-ordenacao" role="tabpanel" aria-labelledby="tab-ordenacao" hidden>
                         <div class="ord-topo">
                             <div class="abas abas-escuras" role="tablist" aria-label="Escolha o algoritmo">
                                 <span class="abas-cursor" aria-hidden="true"></span>
@@ -658,7 +690,7 @@
                     </div>
 
                     <!-- ÁRVORE BINÁRIA DE BUSCA -->
-                    <div class="arvore" id="arvore">
+                    <div class="lab-painel arvore" id="arvore" role="tabpanel" aria-labelledby="tab-arvore" hidden>
                         <header class="arvore-cab">
                             <h3>Árvore binária de busca <small>menores à esquerda, maiores à direita</small></h3>
                             <p>Insira valores e veja por onde cada um desce. A busca compara um nó por nível, por isso custa O(h), a altura da árvore. Insira 10, 20, 30 e 40 numa árvore nova e veja ela virar um galho.</p>
@@ -699,11 +731,11 @@
         <!-- ============ TRILHA (uma lista ligada de conteúdos) ============ -->
         <section id="trilha" class="secao" data-cena>
             <div class="moldura trilha-grade">
-                <header class="cabecalho cabecalho-fixo">
+                <header class="cabecalho cabecalho-fixo" data-end="0x06">
                     <div>
                         <p class="etiqueta">
                             <svg class="simbolo" viewBox="0 0 48 20" aria-hidden="true"><circle cx="6" cy="10" r="4" /><path class="s-traco" d="M10 10h8" /><circle cx="22" cy="10" r="4" /><path class="s-traco" d="M26 10h8" /><circle cx="38" cy="10" r="4" /></svg>
-                            <span>0x06 · trilha da disciplina</span>
+                            <span>trilha da disciplina</span>
                         </p>
                         <h2 class="titulo" data-palavras>Do vetor à árvore</h2>
                     </div>
@@ -781,7 +813,8 @@
         <p class="rodape-assinatura" aria-hidden="true">ED-PORTAL · free(memória) · MATERIAL DIDÁTICO · 2026</p>
     </footer>
 
-    <script src="logica.js?v=2026.11.19d"></script>
-    <script src="script.js?v=2026.11.19d"></script>
+    <script src="logica.js?v=2026.11.25"></script>
+    <script src="script.js?v=2026.11.25"></script>
+    <script type="module" src="arvore3d.js?v=2026.11.25"></script>
 </body>
 </html>
