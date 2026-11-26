@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, ShadingType,
-  AlignmentType, BorderStyle, HeadingLevel, LevelFormat, Footer, PageNumber, TableLayoutType, VerticalAlign,
+  AlignmentType, BorderStyle, ImageRun, HeadingLevel, LevelFormat, Footer, PageNumber, TableLayoutType, VerticalAlign,
 } = require('docx');
 
 const SAIDA = path.resolve(__dirname, '../../aulas/01-arvores-binarias/laboratorio/ficha-aluno-abb.docx');
@@ -16,6 +16,9 @@ const LARG = 9638; // A4 com margens de 2 cm (11906 - 2 x 1134)
 
 // ---------- peças ----------
 const t = (texto, o = {}) => new TextRun({ text: texto, font: FONTE, size: o.size ?? 21, bold: o.bold, italics: o.italics, color: o.color ?? COR.tinta });
+// tecla Windows: o logotipo (quatro quadrados) no lugar da palavra, como na página de orientação
+const LOGO_WIN = fs.readFileSync(path.join(__dirname, 'tecla-windows.png'));
+const teclaWin = () => new ImageRun({ type: 'png', data: LOGO_WIN, transformation: { width: 11, height: 11 }, altText: { title: 'tecla Windows', description: 'Logotipo do Windows: tecla Windows', name: 'tecla-windows' } });
 const cod = (texto) => new TextRun({ text: texto, font: 'Consolas', size: 20, bold: true, color: COR.tinta });
 const p = (partes, o = {}) => new Paragraph({ children: Array.isArray(partes) ? partes : [t(partes)], spacing: { before: o.antes ?? 0, after: o.depois ?? 80 }, alignment: o.alinhar, keepNext: o.keepNext });
 const titulo = (texto) => new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun({ text: texto, font: FONTE })], keepNext: true });
@@ -70,7 +73,7 @@ add(
   sub('Como preencher'),
   item([t('Nas Partes A e B, escreva primeiro a coluna '), t('Minha previsão', { bold: true }), t(' sem usar o simulador. Só depois confira e preencha '), t('No simulador', { bold: true }), t('.')]),
   item([t('Errou a previsão? '), t('Não apague.', { bold: true }), t(' Deixe como estava, escreva o certo em "No simulador" e explique o erro em uma frase em "Se errou, por quê?". O erro explicado mostra o seu raciocínio.')]),
-  item([t('Onde a ficha pede um print: no Windows, aperte '), t('Windows + Shift + S', { bold: true }), t(', selecione a área, clique no espaço indicado aqui na ficha e aperte '), t('Ctrl + V', { bold: true }), t('.')]),
+  item([t('Onde a ficha pede um print: no Windows, aperte '), teclaWin(), t(' + Shift + S', { bold: true }), t(', selecione a área, clique no espaço indicado aqui na ficha e aperte '), t('Ctrl + V', { bold: true }), t('.')]),
   item([t('No fim, salve em .docx com o nome '), cod('ABB_SeuNome.docx'), t(' e envie pelo SIGAA.')]),
 );
 

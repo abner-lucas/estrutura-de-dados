@@ -7,20 +7,17 @@ import {
 } from './tracer';
 import { BarrasSvg } from './barras';
 import { bipe } from './som';
+// a mesma regra usada pela página de conferência do professor (aulas/01-arvores-binarias/conferir/)
+import { codigoCupom } from '../../../conferir/codigo-cupom.mjs';
 
 // ------------------------------------------------------------------ cupom de comprovante
 // Ao terminar uma missão, o simulador "imprime" um cupom com os dados sorteados e o resultado.
 // O aluno copia esses dados na ficha e cola um print do cupom (entrega pelo SIGAA).
 type Linha = [string, string];
-function codigoDoCupom(texto: string) {
-  let h = 2166136261;
-  for (let i = 0; i < texto.length; i++) { h ^= texto.charCodeAt(i); h = Math.imul(h, 16777619); }
-  return (h >>> 0).toString(36).toUpperCase().padStart(7, '0').slice(0, 7);
-}
-function Cupom({ missao, linhas }: { missao: string; linhas: Linha[] }) {
+function Cupom({ missao, num, percurso, linhas }: { missao: string; num: 1 | 2 | 3; percurso?: string; linhas: Linha[] }) {
   const quando = useMemo(() => new Date(), []);
   const dataHora = quando.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-  const codigo = codigoDoCupom(missao + linhas.map((l) => l.join('=')).join('|') + quando.getTime());
+  const codigo = codigoCupom({ missao: num, percurso, campos: linhas.map((l) => l[1]), dataHora: quando });
   return (
     <div className="cupom" role="region" aria-label={`Comprovante da missão ${missao}`}>
       <div className="cupom-topo">
@@ -110,7 +107,7 @@ function Montar({ onShowCode, som }: { onShowCode: (nums: number[]) => void; som
         <Feedback msg={msg} />
         {fim && (
           <div className="ch-end">
-            <Cupom missao="1 · Monte a árvore" linhas={[['Os 7 números', nums.join(', ')], ['Raiz', String(nums[0])], ['Nº de erros', String(errs)]]} />
+            <Cupom missao="1 · Monte a árvore" num={1} linhas={[['Os 7 números', nums.join(', ')], ['Raiz', String(nums[0])], ['Nº de erros', String(errs)]]} />
             <button className="btn" onClick={() => onShowCode(nums)}>Ver esta árvore sendo montada no simulador</button>
           </div>
         )}
@@ -172,7 +169,7 @@ function Percurso({ som }: { som: boolean }) {
         <Feedback msg={msg} />
         {fim && (
           <div className="ch-end">
-            <Cupom missao={`2 · Ordem de visita (${kind})`} linhas={(() => { const vs = order.map((id) => t.nodes[id].valor); return [['Menor e maior nó', `${Math.min(...vs)} e ${Math.max(...vs)}`], ['Lista final gerada', `[${vs.join(', ')}]`], ['Nº de erros', String(errs)]] as Linha[]; })()} />
+            <Cupom missao={`2 · Ordem de visita (${kind})`} num={2} percurso={kind} linhas={(() => { const vs = order.map((id) => t.nodes[id].valor); return [['Menor e maior nó', `${Math.min(...vs)} e ${Math.max(...vs)}`], ['Lista final gerada', `[${vs.join(', ')}]`], ['Nº de erros', String(errs)]] as Linha[]; })()} />
           </div>
         )}
         <button className="btn" onClick={() => restart(treeFrom(randomList(8)), kind)}>Nova árvore</button>
@@ -262,7 +259,7 @@ function Busca({ som }: { som: boolean }) {
         {fim && (
           <div className="ch-end">
             <p>A busca visitou só {caminho.ids.length} de {Object.keys(t.nodes).length} caixas.</p>
-            <Cupom missao="3 · Caminho da busca" linhas={[['Valor buscado', String(alvo)], ['Encontrou?', fim === 'achou' ? 'Sim' : 'Não'], ['Caminho', caminho.ids.map((id) => t.nodes[id].valor).join(' → ') + (fim === 'none' ? ' → None' : '')], ['Nº de erros', String(errs)]]} />
+            <Cupom missao="3 · Caminho da busca" num={3} linhas={[['Valor buscado', String(alvo)], ['Encontrou?', fim === 'achou' ? 'Sim' : 'Não'], ['Caminho', caminho.ids.map((id) => t.nodes[id].valor).join(' → ') + (fim === 'none' ? ' → None' : '')], ['Nº de erros', String(errs)]]} />
           </div>
         )}
         <button className="btn" onClick={restart}>Nova busca</button>

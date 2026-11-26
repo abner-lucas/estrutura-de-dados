@@ -23,7 +23,7 @@ estrutura-de-dados/
 ├── logica.js         # Lógica pura: pilha, fila, lista ligada, ordenação e árvore binária de busca
 ├── script.js         # Interface: tema, rolagem, divisores, filtro, busca, bancadas e laboratórios
 ├── arvore3d.js       # Abertura: árvore binária de busca em 3D (Three.js), com plano B em SVG
-├── testes/           # Testes da lógica: node --test testes/logica.test.js testes/glossario.test.js
+├── testes/           # Testes da lógica: node --test testes/*.test.js
 ├── ferramentas/      # aplicar-identidade.cjs (paleta do portal) e ficha-abb/ (gera a ficha .docx)
 ├── docs/             # PDFs da disciplina (plano, listas, apostilas)
 └── aulas/
@@ -85,6 +85,8 @@ Conteúdo dos slides: `src/deck.tsx` · Animações: `src/remotion/` · Lógica 
 ## 🧪 Laboratório de árvores binárias
 
 Em `aulas/01-arvores-binarias/laboratorio/`: página para o aluno com o passo a passo de cada parte (o que fazer, o que vai ver, onde registrar na ficha), glossário de termos e a **ficha do aluno em .docx**, entregue pelo SIGAA. Para mudar a ficha, edite `ferramentas/ficha-abb/gerar.cjs` e rode `npm install` e `npm run gerar` nessa pasta. As capturas de tela ficam em `laboratorio/img/`.
+
+**Conferir cupons das Missões (uso do professor):** `aulas/01-arvores-binarias/conferir/` (não aparece nos menus). Digite os dados do print do cupom e a página diz se o código confere e se os dados seguem as regras da árvore. A regra do código está em `conferir/codigo-cupom.mjs`, a mesma usada pelo simulador.
 
 ## 🧮 Simulador Estoque ABB
 

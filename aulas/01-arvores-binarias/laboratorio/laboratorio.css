@@ -180,3 +180,8 @@ kbd {
 /* troca de tema sem esmaecer (um clique só) */
 html.sem-transicao *, html.sem-transicao *::before, html.sem-transicao *::after { transition: none !important; }
 .tela img, .cupom-figura img { cursor: zoom-in; }
+
+/* tecla Windows desenhada com o logotipo (quatro quadrados), não escrita */
+kbd.tecla-win { display: inline-flex; align-items: center; justify-content: center; vertical-align: -3px; padding: 3px 8px; }
+kbd.tecla-win svg { width: 14px; height: 14px; fill: #0078D4; }
+[data-tema="escuro"] kbd.tecla-win svg { fill: #4CC2FF; }
