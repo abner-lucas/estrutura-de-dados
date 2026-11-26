@@ -67,7 +67,7 @@ add(
   espaco(160),
   tabela([LARG], [[cel([
     p([t('O cenário', { bold: true, color: COR.petroleo })], { depois: 40 }),
-    p([t('O sistema de uma loja guarda os códigos dos produtos numa árvore binária de busca (ABB). A regra é uma só: '), t('código menor vai para a esquerda; maior ou igual vai para a direita', { bold: true }), t('. No simulador, cada nó é uma caixa do depósito: '), cod('inserir'), t(' cadastra um produto, '), cod('buscar'), t(' é o leitor do caixa procurando um código e '), cod('em_ordem'), t(' gera o relatório em ordem crescente.')], { depois: 0 }),
+    p([t('O sistema de uma loja guarda os códigos dos produtos numa árvore binária de busca (ABB). A regra é uma só: '), t('código menor vai para a esquerda; maior ou igual vai para a direita', { bold: true }), t('. No simulador, cada nó é uma caixa do depósito: '), cod('inserir'), t(' cadastra um produto, '), cod('buscar'), t(' é o leitor do caixa procurando um código e '), cod('em_ordem'), t(' gera o relatório dos produtos.')], { depois: 0 }),
   ], LARG, { fundo: 'F1F5F9' })]]),
   espaco(140),
   sub('Como preencher'),
@@ -120,7 +120,7 @@ add(
     ['B2', [t('Nessa busca pelo '), cod('30'), t(', quantas caixas nunca foram olhadas? Quais?')]],
     ['B3', [t('O caixa busca o produto '), cod('55'), t(', que não existe. Quais caixas são visitadas até a busca parar?')]],
     ['B4', [t('O gerente pede o relatório com '), cod('em_ordem'), t('. Qual lista sai no final?')]],
-    ['B5', [t('Em uma frase, com as suas palavras: por que o '), cod('em_ordem'), t(' sempre devolve os códigos em ordem crescente?')]],
+    ['B5', [t('Olhe a lista do '), cod('em_ordem'), t('. O que ela tem de especial? Em uma frase, com as suas palavras, por que isso acontece?')]],
   ]),
   espaco(160),
   etapa('2º · Agora, no simulador.', [
@@ -156,7 +156,7 @@ add(
 // Parte D
 add(
   titulo('Parte D · Cadastro em ordem crescente'),
-  p([t('Clique em '), t('Cadastro em ordem', { bold: true }), t('. O simulador cadastra '), cod('[10, 20, 30, 45, 50, 60, 70]'), t(' nessa ordem e já deixa o '), cod('70'), t(' no campo código. Observe a forma da árvore, depois clique em '), cod('buscar'), t(' e em '), cod('em_ordem'), t('.')], { depois: 140 }),
+  p([t('Clique em '), t('Cadastro em ordem', { bold: true }), t('. O simulador cadastra os mesmos sete códigos da Parte A, um por um, do menor para o maior, e já deixa o '), cod('70'), t(' no campo código. Observe a forma da árvore, depois clique em '), cod('buscar'), t(' e em '), cod('em_ordem'), t('.')], { depois: 140 }),
   sub('D1 · A forma da árvore'),
   p('Descreva em uma frase a forma que a árvore tomou e cole o print.'),
   tabela([LARG], [[vazia(LARG)]], [620]),

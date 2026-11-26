@@ -19,7 +19,7 @@
         { termo: 'folha', variantes: ['folhas'], def: 'Nó que não tem filhos: nenhuma caixa embaixo dele.' },
         { termo: 'nível', variantes: ['níveis'], def: 'Cada camada da árvore. A raiz está no nível 1, os filhos dela no nível 2, e assim por diante.' },
         { termo: 'altura', def: 'Quantos níveis a árvore tem, da raiz até a folha mais funda.' },
-        { termo: 'percurso em ordem', def: 'Visita esquerda, depois o próprio nó, depois a direita. Numa ABB, devolve os códigos em ordem crescente.' },
+        { termo: 'percurso em ordem', def: 'Percurso que visita a esquerda, depois o próprio nó, depois a direita.' },
         { termo: 'None', def: 'Valor do Python que significa "nada". Na árvore, é um espaço vazio onde não há caixa.' },
         { termo: 'EAN-13', def: 'Padrão de código de barras de 13 dígitos usado nos produtos das lojas. Aparece nas etiquetas das caixas.' },
         { termo: 'SIGAA', def: 'Sistema Integrado de Gestão de Atividades Acadêmicas: onde você entrega a ficha.' },

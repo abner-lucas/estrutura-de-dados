@@ -23,8 +23,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../style.css?v=2026.11.26b">
-    <link rel="stylesheet" href="laboratorio.css?v=2026.11.26b">
+    <link rel="stylesheet" href="../../../style.css?v=2026.11.26c">
+    <link rel="stylesheet" href="laboratorio.css?v=2026.11.26c">
 </head>
 <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -77,20 +77,19 @@
                             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m-4-4 4 4 4-4M4 16h12" /></svg>
                         </a>
                     </div>
-                    <p class="lab-aviso">Comece pela ficha. O simulador só entra na Parte A, <b>depois</b> que você escrever as suas previsões.</p>
                     <p class="lab-progresso" aria-live="polite"><span id="feitos-n">0</span> de <span id="feitos-total">0</span> passos marcados como feitos</p>
                 </div>
 
                 <!-- A regra em uma imagem: a caixa nova compara com a raiz -->
                 <figure class="regra-figura" aria-label="A regra da árvore: códigos menores vão para a esquerda, maiores ou iguais para a direita">
-                    <div class="regra-caixa regra-raiz"><b>45</b><i></i></div>
+                    <div class="regra-caixa regra-raiz"><b>52</b><i></i></div>
                     <div class="regra-ramos" aria-hidden="true">
                         <span class="regra-esq">menor ←</span>
                         <span class="regra-dir">→ maior ou igual</span>
                     </div>
                     <div class="regra-filhos">
-                        <div class="regra-caixa"><b>20</b><i></i></div>
-                        <div class="regra-caixa"><b>60</b><i></i></div>
+                        <div class="regra-caixa"><b>28</b><i></i></div>
+                        <div class="regra-caixa"><b>81</b><i></i></div>
                     </div>
                     <figcaption>A única regra: cada código desce comparando com as caixas. Menor vai para a esquerda; maior ou igual, para a direita.</figcaption>
                 </figure>
@@ -181,7 +180,7 @@
                     <li class="passo" data-passo="a-abrir">
                         <p class="faca">Com A1, A2 e A3 já escritos na coluna <b>Minha previsão</b>, abra o simulador em outra aba: <a href="../simulador/" target="_blank" rel="noopener"><b>Abrir o simulador</b></a>.</p>
                         <p class="veja">No topo aparece <b>Estoque ABB</b>, e embaixo o depósito com sete caixas. Cada caixa é um nó, com o código do produto e um código de barras EAN-13 na etiqueta.</p>
-                        <figure class="tela"><img src="img/topo.png?v=2026.11.26b" alt="Topo do simulador: logotipo do IF, título Estoque ABB, botões Simulador e Missões, Som desligado, Professor e Portal." loading="lazy" width="1280" height="66"><figcaption>O topo do simulador. <b>Simulador</b> e <b>Missões</b> trocam de tela; <b>Som</b> liga o bipe do leitor (opcional).</figcaption></figure>
+                        <figure class="tela"><img src="img/topo.png?v=2026.11.26c" alt="Topo do simulador: logotipo do IF, título Estoque ABB, botões Simulador e Missões, Som desligado, Professor e Portal." loading="lazy" width="1280" height="66"><figcaption>O topo do simulador. <b>Simulador</b> e <b>Missões</b> trocam de tela; <b>Som</b> liga o bipe do leitor (opcional).</figcaption></figure>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
                     <li class="passo" data-passo="a-lado">
@@ -191,15 +190,15 @@
                     </li>
                     <li class="passo" data-passo="a-3">
                         <p class="faca">No simulador, clique em <b>Catálogo da loja</b>, o primeiro botão da barra, e compare a árvore com a sua tabela A1.</p>
-                        <figure class="tela"><img src="img/barra.png?v=2026.11.26b" alt="Barra do simulador: botões Catálogo da loja e Cadastro em ordem, visor do código, botões inserir, buscar e em_ordem, e Ver código e pilha." loading="lazy" width="1280" height="74"><figcaption>Da esquerda para a direita: os dois cenários, o visor <b>código</b> (onde você digita) e os botões <code>inserir</code>, <code>buscar</code> e <code>em_ordem</code>.</figcaption></figure>
+                        <figure class="tela"><img src="img/barra.png?v=2026.11.26c" alt="Barra do simulador: botões Catálogo da loja e Cadastro em ordem, visor do código, botões inserir, buscar e em_ordem, e Ver código e pilha." loading="lazy" width="1280" height="74"><figcaption>Da esquerda para a direita: os dois cenários, o visor <b>código</b> (onde você digita) e os botões <code>inserir</code>, <code>buscar</code> e <code>em_ordem</code>.</figcaption></figure>
                         <p class="veja">A árvore aparece pronta. No alto do painel ficam os contadores <b>nós (produtos)</b> e <b>níveis (altura)</b>.</p>
-                        <figure class="tela"><img src="img/catalogo.png?v=2026.11.26b" alt="Depósito com a árvore do catálogo: 45 na raiz; 20 e 60 no segundo nível; 10, 30, 50 e 70 no terceiro. Contadores: 7 nós e 3 níveis." loading="lazy" width="1176" height="464"><figcaption>O catálogo da loja no simulador.</figcaption></figure>
+                        <figure class="tela"><img src="img/exemplo-arvore.png?v=2026.11.26c" alt="Exemplo com outros códigos: 52 na raiz; 28 à esquerda e 81 à direita; 37 à direita do 28; 33 à esquerda do 37; 93 à direita do 81. Contadores: 6 nós e 4 níveis." loading="lazy" width="1176" height="464"><figcaption><b>Exemplo com outros códigos</b>, que não estão na ficha: a sua tela vai mostrar a árvore do catálogo. Repare onde ficam o painel, os contadores e a regra no canto.</figcaption></figure>
                         <p class="registre">Confira a sua tabela A1 com a tela. Tire um print (<kbd class="tecla-win" title="tecla Windows"><svg viewBox="0 0 16 16" role="img" aria-label="Windows"><rect width="7.4" height="7.4"/><rect x="8.6" width="7.4" height="7.4"/><rect y="8.6" width="7.4" height="7.4"/><rect x="8.6" y="8.6" width="7.4" height="7.4"/></svg></kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>, selecione a árvore) e cole com <kbd>Ctrl</kbd> + <kbd>V</kbd> em <span class="destino">Ficha › Parte A › caixa do print</span>.</p>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
                     <li class="passo" data-passo="a-4">
                         <p class="faca">Confira A2 olhando os contadores e as caixas sem nada embaixo. Para A3, digite <code>45</code> no visor <b>código</b> e clique em <code>inserir</code>. Depois clique em <b>Próximo passo</b> várias vezes (ou em <b>Ir ao resultado</b>).</p>
-                        <p class="veja">Uma caixa nova com o 45 desce pela árvore. Ao lado dela aparece cada comparação, por exemplo <code>45 = 45 → direita</code>. No quadro de baixo surge o <b>Resultado</b>, dizendo à esquerda ou à direita de qual caixa ela entrou.</p>
+                        <p class="veja">Uma caixa nova com o 45 desce pela árvore. Ao lado dela aparece cada comparação, por exemplo <code>12 &lt; 52 → esquerda</code> (os números variam). No quadro de baixo surge o <b>Resultado</b>, dizendo à esquerda ou à direita de qual caixa ela entrou.</p>
                         <p class="registre"><span class="destino">Ficha › Parte A › A2 e A3</span> colunas “No simulador” e, se errou, “Se errou, por quê?”.</p>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
@@ -234,24 +233,24 @@
                     </li>
                     <li class="passo" data-passo="b-2">
                         <p class="faca">No simulador, confira se o catálogo está na tela (se não, clique em <b>Catálogo da loja</b>). Digite <code>30</code> no visor e clique em <code>buscar</code>. Vá clicando em <b>Próximo passo</b>.</p>
-                        <p class="veja">Um leitor de código de barras passa de caixa em caixa com o laser vermelho. A caixa que está sendo lida fica com borda laranja, e ao lado aparece a comparação, como <code>30 &gt; 20 → direita</code>.</p>
-                        <figure class="tela"><img src="img/busca.png?v=2026.11.26b" alt="Busca pelo 30: o leitor está na caixa 20 e a legenda mostra 30 maior que 20, direita." loading="lazy" width="1176" height="464"><figcaption>A busca pelo 30 no meio do caminho: o leitor está na caixa 20.</figcaption></figure>
+                        <p class="veja">Um leitor de código de barras passa de caixa em caixa com o laser vermelho. A caixa que está sendo lida fica com borda laranja, e ao lado aparece a comparação, como <code>33 &gt; 28 → direita</code> no exemplo abaixo.</p>
+                        <figure class="tela"><img src="img/exemplo-busca.png?v=2026.11.26c" alt="Exemplo com outros códigos: busca pelo 33; o leitor está na caixa 28 e a legenda mostra 33 maior que 28, direita." loading="lazy" width="1176" height="464"><figcaption><b>Exemplo com outros códigos</b>, que não estão na ficha: a sua tela vai mostrar a árvore do catálogo. Aqui, a busca pelo 33 no meio do caminho.</figcaption></figure>
                         <p class="veja">No fim, o quadro <b>Resultado</b> mostra o caminho completo e quantos nós foram visitados.</p>
-                        <figure class="tela tela-estreita"><img src="img/resultado.png?v=2026.11.26b" alt="Quadro de resultado: buscar(30): 45 → 20 → 30, 3 nós visitados, Encontrado." loading="lazy" width="1176" height="132"><figcaption>O resultado da busca pelo 30.</figcaption></figure>
+                        <figure class="tela tela-estreita"><img src="img/exemplo-resultado.png?v=2026.11.26c" alt="Exemplo com outros códigos: quadro de resultado da busca pelo 33, 4 nós visitados, encontrado." loading="lazy" width="1176" height="132"><figcaption>O quadro de resultado no mesmo exemplo.</figcaption></figure>
                         <p class="registre"><span class="destino">Ficha › Parte B › B1 e B2</span> coluna “No simulador”. Para B2, conte as caixas que o leitor nunca tocou.</p>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
                     <li class="passo" data-passo="b-3">
                         <p class="faca">Digite <code>55</code> e clique em <code>buscar</code>. Clique em <b>Ir ao resultado</b>.</p>
-                        <p class="veja">O leitor desce até encontrar um espaço vazio: é o <code>None</code>. O resultado diz <b>Não encontrado</b>.</p>
+                        <p class="veja">O leitor desce até encontrar um espaço vazio: é o <code>None</code>. O quadro de resultado diz se o código foi encontrado.</p>
                         <p class="registre"><span class="destino">Ficha › Parte B › B3</span> coluna “No simulador”.</p>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
                     <li class="passo" data-passo="b-4">
                         <p class="faca">Clique em <code>em_ordem</code> e depois em <b>Ir ao resultado</b>.</p>
                         <p class="veja">Cada caixa ganha um número laranja na ordem em que entrou no relatório. O resultado mostra a lista final.</p>
-                        <figure class="tela"><img src="img/em-ordem.png?v=2026.11.26b" alt="Percurso em ordem: caixas numeradas de 1 a 7, na ordem 10, 20, 30, 45, 50, 60, 70." loading="lazy" width="1176" height="464"><figcaption>Os números mostram a ordem do relatório: esquerda, a própria caixa, direita.</figcaption></figure>
-                        <p class="registre"><span class="destino">Ficha › Parte B › B4 e B5</span>. Em B5, explique com as suas palavras por que a lista sai em ordem crescente.</p>
+                        <figure class="tela"><img src="img/exemplo-em-ordem.png?v=2026.11.26c" alt="Exemplo com outros códigos: caixas numeradas na ordem do relatório em ordem." loading="lazy" width="1176" height="464"><figcaption><b>Exemplo com outros códigos</b>, que não estão na ficha: a sua tela vai mostrar a árvore do catálogo. Os números laranja mostram a ordem do relatório.</figcaption></figure>
+                        <p class="registre"><span class="destino">Ficha › Parte B › B4 e B5</span>. Em B5, explique com as suas palavras o que a lista tem de especial e por quê.</p>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
                 </ol>
@@ -319,8 +318,8 @@
                 <ol class="passos">
                     <li class="passo" data-passo="d-1">
                         <p class="faca">No simulador, clique em <b>Cadastro em ordem</b>, o segundo botão da barra.</p>
-                        <p class="veja">O simulador cadastra <code>[10, 20, 30, 45, 50, 60, 70]</code> nessa ordem e já deixa o <code>70</code> no visor. Os contadores mudam.</p>
-                        <figure class="tela"><img src="img/ordenado.png?v=2026.11.26b" alt="Árvore do cadastro em ordem: as sete caixas formam uma linha diagonal, cada uma à direita da anterior; 7 nós e 7 níveis." loading="lazy" width="1176" height="464"><figcaption>Compare a forma e os contadores com os da Parte A.</figcaption></figure>
+                        <p class="veja">O simulador cadastra os mesmos sete códigos da Parte A, um por um, do menor para o maior, e já deixa o <code>70</code> no visor. Os contadores mudam.</p>
+                        <figure class="tela"><img src="img/ordenado.png?v=2026.11.26c" alt="Árvore do cadastro em ordem: as sete caixas formam uma linha diagonal, cada uma à direita da anterior; 7 nós e 7 níveis." loading="lazy" width="1176" height="464"><figcaption>Compare a forma e os contadores com os da Parte A.</figcaption></figure>
                         <p class="registre"><span class="destino">Ficha › Parte D › D1</span> descreva a forma em uma frase e cole o print.</p>
                         <label class="feito"><input type="checkbox"> feito</label>
                     </li>
@@ -349,7 +348,7 @@
                         <ol class="passos passos-escuros">
                             <li class="passo" data-passo="e-1">
                                 <p class="faca">No topo do simulador, clique em <b>Missões</b> (ou <a href="../simulador/?modo=missoes" target="_blank" rel="noopener">abra as Missões direto</a>).</p>
-                                <figure class="tela"><img src="img/missoes-abas.png?v=2026.11.26b" alt="Abas das missões: 1 Monte a árvore, 2 Ordem de visita, 3 Caminho da busca." loading="lazy" width="493" height="48"></figure>
+                                <figure class="tela"><img src="img/missoes-abas.png?v=2026.11.26c" alt="Abas das missões: 1 Monte a árvore, 2 Ordem de visita, 3 Caminho da busca." loading="lazy" width="493" height="48"></figure>
                                 <label class="feito"><input type="checkbox"> feito</label>
                             </li>
                             <li class="passo" data-passo="e-2">
@@ -370,7 +369,7 @@
                                 <label class="feito"><input type="checkbox"> feito</label>
                             </li>
                         </ol>
-                        <figure class="cupom-figura"><img src="img/cupom.png?v=2026.11.26b" alt="Cupom de comprovante da missão 3, Caminho da busca: valor buscado 14, encontrou: não, caminho 87, 52, 32, None, 3 erros, data e número do cupom com código de barras." loading="lazy" width="312" height="344"><figcaption>Exemplo de cupom (os números da sua rodada serão outros).</figcaption></figure>
+                        <figure class="cupom-figura"><img src="img/cupom.png?v=2026.11.26c" alt="Cupom de comprovante da missão 3, Caminho da busca: valor buscado 14, encontrou: não, caminho 87, 52, 32, None, 3 erros, data e número do cupom com código de barras." loading="lazy" width="312" height="344"><figcaption>Exemplo de cupom (os números da sua rodada serão outros).</figcaption></figure>
                     </div>
                 </div>
             </div>
@@ -459,7 +458,7 @@
     </footer>
 
     <div class="balao" id="balao" role="tooltip" hidden></div>
-    <script src="glossario.js?v=2026.11.26b"></script>
-    <script src="laboratorio.js?v=2026.11.26b"></script>
+    <script src="glossario.js?v=2026.11.26c"></script>
+    <script src="laboratorio.js?v=2026.11.26c"></script>
 </body>
 </html>
