@@ -1,0 +1,11 @@
+{
+  "name": "ficha-abb",
+  "private": true,
+  "description": "Gera a ficha do aluno (.docx) do laboratório de árvore binária de busca",
+  "scripts": {
+    "gerar": "node gerar.cjs"
+  },
+  "dependencies": {
+    "docx": "^9.5.1"
+  }
+}

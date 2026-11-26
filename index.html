@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2026.11.25">
+    <link rel="stylesheet" href="style.css?v=2026.11.25b">
 </head>
 <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -164,6 +164,14 @@
                         Copie um <li class="aviso"> e cole no TOPO da lista.
                         data-tipo: info (azul-petróleo) · prazo (coral) · ok (verde)
                     -->
+                    <li class="aviso" data-tipo="prazo">
+                        <time class="aviso-data" datetime="2026-11-25"><b>25</b> nov 2026</time>
+                        <div class="aviso-corpo">
+                            <span class="aviso-tipo">Laboratório</span>
+                            <h3>Laboratório de árvores binárias: orientações e ficha</h3>
+                            <p>As <a href="aulas/01-arvores-binarias/laboratorio/">orientações do laboratório</a> explicam, passo a passo, o que fazer no simulador <b>Estoque ABB</b>. Baixe a <a href="aulas/01-arvores-binarias/laboratorio/ficha-aluno-abb.docx" download>ficha do aluno (.docx)</a>, preencha e entregue pelo SIGAA.</p>
+                        </div>
+                    </li>
                     <li class="aviso" data-tipo="ok">
                         <time class="aviso-data" datetime="2026-11-19"><b>19</b> nov 2026</time>
                         <div class="aviso-corpo">
@@ -225,8 +233,14 @@
                                 <span class="no-cat">aula · árvores</span>
                             </div>
                             <h3>Árvores binárias</h3>
-                            <p>Raiz, nós, folhas e subárvores esquerda e direita. Na árvore binária de busca, os menores ficam à esquerda e os maiores à direita, e é isso que torna a busca rápida. Assista à apresentação, acompanhe o código no simulador e resolva os exercícios.</p>
+                            <p>Raiz, nós, folhas e subárvores esquerda e direita. Na árvore binária de busca, os menores ficam à esquerda e os maiores à direita, e é isso que torna a busca rápida. Assista à apresentação e siga o laboratório no simulador.</p>
                             <ul class="no-links">
+                                <li>
+                                    <a href="aulas/01-arvores-binarias/laboratorio/">
+                                        <span class="no-links-txt"><strong>Laboratório: orientações e ficha</strong><small>passo a passo no simulador · ficha .docx</small></span>
+                                        <span class="no-links-ir" aria-hidden="true">→</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="aulas/01-arvores-binarias/">
                                         <span class="no-links-txt"><strong>Apresentação da aula</strong><small>slides animados · ← → navegam</small></span>
@@ -235,7 +249,7 @@
                                 </li>
                                 <li>
                                     <a href="aulas/01-arvores-binarias/simulador/">
-                                        <span class="no-links-txt"><strong>Simulador passo a passo</strong><small>o código Python executando, linha por linha</small></span>
+                                        <span class="no-links-txt"><strong>Simulador Estoque ABB</strong><small>a árvore como o depósito de uma loja</small></span>
                                         <span class="no-links-ir" aria-hidden="true">→</span>
                                     </a>
                                 </li>
@@ -547,43 +561,55 @@
                                 <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[1]</span>SIM-01</td>
-                                <td><strong>Simulador de árvore binária de busca</strong><span>Executa o código Python da aula linha por linha: árvore, pilha de chamadas, variáveis e saída do print, com perguntas de previsão e desafios.</span></td>
+                                <td class="hash-chave"><span>[1]</span>LAB-ABB</td>
+                                <td><strong>Laboratório: orientações passo a passo</strong><span>O que fazer em cada parte do laboratório no simulador Estoque ABB e como entregar.</span></td>
+                                <td class="hash-fmt">página</td>
+                                <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/laboratorio/">abrir</a></td>
+                            </tr>
+                            <tr>
+                                <td class="hash-chave"><span>[2]</span>FICHA</td>
+                                <td><strong>Ficha do aluno do laboratório</strong><span>Para preencher no Word, LibreOffice ou Google Docs e entregar pelo SIGAA.</span></td>
+                                <td class="hash-fmt">.docx</td>
+                                <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/laboratorio/ficha-aluno-abb.docx" download>abrir</a></td>
+                            </tr>
+                            <tr>
+                                <td class="hash-chave"><span>[3]</span>SIM-01</td>
+                                <td><strong>Simulador Estoque ABB</strong><span>A árvore de busca como o depósito de uma loja: cadastrar, buscar com o leitor e gerar o relatório; missões com cupom. Também mostra o código Python e a pilha de chamadas.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/simulador/">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[2]</span>COLAB-03</td>
+                                <td class="hash-chave"><span>[4]</span>COLAB-03</td>
                                 <td><strong>Exercícios · Árvore binária de busca</strong><span>Notebook do aluno com o código da aula e exercícios. Salve uma cópia no seu Drive para editar.</span></td>
                                 <td class="hash-fmt">Colab · Python</td>
                                 <td class="hash-acao"><a class="link-abrir" href="https://colab.research.google.com/github/abner-lucas/estrutura-de-dados/blob/main/aulas/01-arvores-binarias/simulador/materiais/exercicios-abb-aluno.ipynb" target="_blank" rel="noopener noreferrer">abrir<span class="sr-only"> no Google Colab (nova aba)</span></a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[3]</span>CART-01</td>
+                                <td class="hash-chave"><span>[5]</span>CART-01</td>
                                 <td><strong>Cartões da árvore humana</strong><span>Cartões para imprimir da dinâmica em sala: cada estudante vira um nó da árvore.</span></td>
                                 <td class="hash-fmt">PDF</td>
                                 <td class="hash-acao"><a class="link-abrir" href="aulas/01-arvores-binarias/simulador/materiais/cartoes-arvore-humana.pdf" target="_blank" rel="noopener noreferrer">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[4]</span>COLAB</td>
+                                <td class="hash-chave"><span>[6]</span>COLAB</td>
                                 <td><strong>Códigos das aulas práticas</strong><span>15 notebooks do Google Colab, de funções e recursão a árvores, agrupados por conteúdo.</span></td>
                                 <td class="hash-fmt">Colab · Python</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#codigos">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[5]</span>LAB-01</td>
+                                <td class="hash-chave"><span>[7]</span>LAB-01</td>
                                 <td><strong>Visualizador de pilha, fila e lista ligada</strong><span>Insira e remova valores e veja o custo de cada operação.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#lab-lineares">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[6]</span>LAB-02</td>
+                                <td class="hash-chave"><span>[8]</span>LAB-02</td>
                                 <td><strong>Ordenação passo a passo</strong><span>Bolha, seleção e inserção no mesmo vetor, com contagem de comparações e trocas.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#lab-ordenacao">abrir</a></td>
                             </tr>
                             <tr>
-                                <td class="hash-chave"><span>[7]</span>LAB-03</td>
+                                <td class="hash-chave"><span>[9]</span>LAB-03</td>
                                 <td><strong>Árvore binária de busca</strong><span>Inserção, busca e percursos pré-ordem, em ordem e pós-ordem.</span></td>
                                 <td class="hash-fmt">interativo</td>
                                 <td class="hash-acao"><a class="link-abrir" href="#arvore">abrir</a></td>
@@ -813,8 +839,8 @@
         <p class="rodape-assinatura" aria-hidden="true">ED-PORTAL · free(memória) · MATERIAL DIDÁTICO · 2026</p>
     </footer>
 
-    <script src="logica.js?v=2026.11.25"></script>
-    <script src="script.js?v=2026.11.25"></script>
-    <script type="module" src="arvore3d.js?v=2026.11.25"></script>
+    <script src="logica.js?v=2026.11.25b"></script>
+    <script src="script.js?v=2026.11.25b"></script>
+    <script type="module" src="arvore3d.js?v=2026.11.25b"></script>
 </body>
 </html>

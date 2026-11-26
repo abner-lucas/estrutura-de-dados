@@ -23,15 +23,16 @@ estrutura-de-dados/
 ├── logica.js         # Lógica pura: pilha, fila, lista ligada, ordenação e árvore binária de busca
 ├── script.js         # Interface: tema, rolagem, divisores, filtro, busca, bancadas e laboratórios
 ├── arvore3d.js       # Abertura: árvore binária de busca em 3D (Three.js), com plano B em SVG
-├── testes/           # Testes da lógica: node --test testes/logica.test.js
-├── ferramentas/      # aplicar-identidade.cjs: aplica a paleta do portal a um projeto React (src/)
+├── testes/           # Testes da lógica: node --test testes/logica.test.js testes/glossario.test.js
+├── ferramentas/      # aplicar-identidade.cjs (paleta do portal) e ficha-abb/ (gera a ficha .docx)
 ├── docs/             # PDFs da disciplina (plano, listas, apostilas)
 └── aulas/
     └── 01-arvores-binarias/      # Apresentação da aula de árvores binárias de busca
         ├── index.html            # Apresentação pronta (gerada pelo build)
         ├── media/                # Vídeos e imagens renderizados com Remotion
         ├── fonte/                # Código-fonte da apresentação (React + Remotion)
-        └── simulador/            # Simulador da ABB: executa o código Python da aula linha por linha
+        ├── laboratorio/          # Orientações do laboratório (passo a passo) + ficha do aluno .docx
+        └── simulador/            # Simulador Estoque ABB: a árvore como o depósito de uma loja
             ├── index.html        # Simulador pronto (gerado pelo build)
             ├── materiais/        # Exercícios do aluno (.ipynb) e cartões da árvore humana (PDF/HTML)
             └── fonte/            # Código-fonte do simulador (React + Vite)
@@ -81,16 +82,21 @@ npm run build        # atualiza ../index.html (a apresentação publicada)
 
 Conteúdo dos slides: `src/deck.tsx` · Animações: `src/remotion/` · Lógica da ABB: `src/bst.ts` · Cores e fontes: `src/theme.ts` e `src/styles.css`.
 
-## 🧮 Simulador de árvore binária de busca
+## 🧪 Laboratório de árvores binárias
 
-Em `aulas/01-arvores-binarias/simulador/`. Executa, linha por linha, o código Python da aula (`inserir`, `buscar`, `em_ordem`, `pre_ordem`, `pos_ordem`), mostrando a árvore, a linha atual, a pilha de chamadas, as variáveis e a saída do `print`, com perguntas de previsão e uma aba de desafios.
+Em `aulas/01-arvores-binarias/laboratorio/`: página para o aluno com o passo a passo de cada parte (o que fazer, o que vai ver, onde registrar na ficha), glossário de termos e a **ficha do aluno em .docx**, entregue pelo SIGAA. Para mudar a ficha, edite `ferramentas/ficha-abb/gerar.cjs` e rode `npm install` e `npm run gerar` nessa pasta. As capturas de tela ficam em `laboratorio/img/`.
+
+## 🧮 Simulador Estoque ABB
+
+Em `aulas/01-arvores-binarias/simulador/`. A árvore é o depósito de uma loja: cada nó é uma caixa com código de barras EAN-13 (JsBarcode), `inserir` traz uma caixa nova, `buscar` passa o leitor com laser e o bipe é opcional (Web Audio). As **Missões** terminam com um cupom de comprovante. Na visão **Ver código e pilha**, executa, linha por linha, o código Python da aula (`inserir`, `buscar`, `em_ordem`, `pre_ordem`, `pos_ordem`), mostrando a árvore, a linha atual, a pilha de chamadas, as variáveis e a saída do `print`, com perguntas de previsão e uma aba de desafios.
 
 Links prontos para a turma (também gerados pelo botão **⚙ Professor → Copiar link**):
 
 - `?numeros=45,20,60,10,30,50,70`: lista usada no script
 - `&busca=30`: valor de `valor_teste`
 - `&perguntas=nenhuma|essenciais|todas`: nível das perguntas de previsão
-- `&modo=desafios`: abre direto na aba de desafios
+- `&modo=missoes`: abre direto nas Missões
+- `?cenario=ordenado`: abre no Cadastro em ordem
 
 Os exercícios do aluno abrem direto no Colab a partir deste repositório. O notebook do professor (com gabarito) **não** fica no repositório, que é público.
 

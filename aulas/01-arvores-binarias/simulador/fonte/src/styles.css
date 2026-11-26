@@ -290,3 +290,123 @@ code { font-family: var(--mono); background: #EEF2F6; padding: 0 5px; border-rad
 h1, h2, h3, .title h1 { font-family: var(--titulo); letter-spacing: -0.01em; }
 .portal-link { text-decoration: none; display: inline-flex; align-items: center; }
 a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* =====================================================================
+   CENÁRIO "ESTOQUE ABB" (2026-11): depósito de uma loja
+   Nós = caixas de produto com etiqueta e código de barras EAN-13 (JsBarcode);
+   inserir = caixa nova chegando; buscar = leitor de código com laser.
+   ===================================================================== */
+.topbar { background: #0F1B2D; position: relative; padding-bottom: 12px; }
+.topbar::after {
+  /* faixa de segurança de depósito */
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 5px;
+  background: repeating-linear-gradient(-45deg, #F2C230 0 12px, #1B1B1B 12px 24px);
+}
+.title h1 { font-size: 22px; letter-spacing: -.02em; }
+.modes { background: rgba(255, 255, 255, .08); }
+.modes button { font-size: 14.5px; padding: 8px 18px; }
+.modes button.on { background: #F2C230; color: #1B1B1B; }
+.btn.som.on { background: rgba(242, 194, 48, .2); border-color: #F2C230; }
+
+/* botões com nome do código + ação da loja */
+.btn.op, .btn.cen { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.1; padding: 6px 12px; }
+.btn.op b { font: 700 14.5px var(--mono); }
+.btn.op small, .btn.cen small { font: 600 11px var(--font); color: var(--muted); }
+.btn.cen b { font-size: 14px; }
+.btn.cen.on small { color: #1B1B1B; }
+.opval { flex-direction: column; align-items: flex-start; gap: 2px; font-size: 11px; color: var(--muted); }
+.opval span { font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.opval input {
+  /* visor de caixa registradora */
+  width: 92px; background: #0A1A12; color: #7CFFB2; border-color: #0A1A12; font: 700 20px var(--mono);
+  text-align: right; letter-spacing: .06em; box-shadow: inset 0 2px 6px rgba(0, 0, 0, .5);
+}
+.opval input:focus { outline: 3px solid var(--orange); outline-offset: 1px; }
+
+/* placa do depósito no lugar do rótulo "ÁRVORE" */
+.tree-head .placa { font: 800 13px var(--titulo); text-transform: uppercase; letter-spacing: .08em; background: #F2C230; color: #1B1B1B; padding: 3px 10px; border-radius: 4px; }
+.counter { background: #F1F5F9; border: 1px solid var(--line); }
+.tree-panel { background: #E9EDF1; }
+.legend .lg-regra { margin-left: auto; font: 700 12.5px var(--mono); color: var(--green); background: #fff; padding: 2px 10px; border-radius: 6px; border: 1px solid var(--line); }
+
+/* caixa de produto */
+.node .caixa-g { filter: url(#sombra); }
+.node .caixa { fill: url(#papelao); stroke: #8A5A2B; stroke-width: 1.5; transition: stroke .2s, stroke-width .2s; }
+.node .fita { fill: #E8C88F; opacity: .85; }
+.node .etiqueta { fill: #fff; stroke: #CFD6DF; stroke-width: 1; transition: fill .25s; }
+.node .val { fill: #0F1B2D; font: 800 19px var(--mono); pointer-events: none; }
+.node .barras rect { fill: #111; }
+.node.focus .caixa { stroke: var(--orange); stroke-width: 4; }
+.node.focus .etiqueta { fill: #FFF1EC; }
+.node.focus .val { fill: #0F1B2D; }
+.node.appended .etiqueta { fill: #FFE3DA; }
+.node.done .etiqueta { fill: #E3ECF7; }
+.node.found .caixa { stroke: #1F8A4C; stroke-width: 4; }
+.node.found .etiqueta { fill: #E3F6E8; }
+.node.instack .caixa { stroke: var(--orange); stroke-width: 3; stroke-dasharray: 6 4; }
+.node.pending .caixa { fill: #fff; stroke: var(--orange); stroke-width: 2.5; stroke-dasharray: 6 4; }
+.node.pending .val { fill: #B23A1C; }
+.node.pickable:hover .caixa { stroke: var(--orange); stroke-width: 4; }
+.node.wrong .caixa { fill: #F2B8BF; stroke: var(--red); stroke-width: 4; }
+.node.reveal .caixa { animation: piscaCaixa 1s ease infinite; }
+@keyframes piscaCaixa { 50% { stroke: #1F8A4C; stroke-width: 6; } }
+.node .pulse { fill: none; stroke: var(--orange); stroke-width: 3; }
+.node.found .pulse { stroke: #1F8A4C; }
+.edge { stroke: #8C99A8; stroke-width: 3.5; stroke-linecap: round; }
+.rootptr text { font: 700 12.5px var(--mono); fill: #0F1B2D; }
+.empty-tree { font: 700 17px var(--mono); fill: #6B7A8F; }
+.slot circle { fill: #FFF6E5; stroke: #C98A1A; }
+.slot text { fill: #8A5300; }
+.slot:hover circle { fill: #F2C230; }
+.slot:hover text { fill: #1B1B1B; }
+
+/* valor em trânsito */
+.token .comparacao { font: 700 15px var(--mono); fill: #0F1B2D; paint-order: stroke; stroke: #E9EDF1; stroke-width: 5px; stroke-linejoin: round; }
+.token .tk-val { font: 800 15px var(--mono); fill: #0F1B2D; }
+.token.nova .caixa { fill: url(#papelao); stroke: #8A5A2B; stroke-width: 1.5; filter: url(#sombra); }
+.token.nova .fita { fill: #E8C88F; }
+.token.nova .etiqueta { fill: #fff; }
+.token .leitor path { fill: #1F2937; stroke: #0B1220; stroke-width: 1.5; filter: url(#sombra); }
+.token .leitor .visor { fill: #0A1A12; }
+.token .leitor .tk-val { fill: #7CFFB2; font-size: 13px; }
+.token .laser { fill: rgba(255, 40, 40, .22); stroke: rgba(255, 40, 40, .55); stroke-width: 1; animation: laser .9s ease-in-out infinite; }
+@keyframes laser { 50% { fill: rgba(255, 40, 40, .1); } }
+
+/* narração */
+.note p { font-size: 17.5px; }
+.resumo { font-size: 14.5px; }
+
+/* missões */
+.ch-tabs button.on { background: #F2C230; border-color: #F2C230; color: #1B1B1B; }
+.ch-tree { background: #E9EDF1; }
+.ch-end { background: transparent; padding: 0; }
+.cupom {
+  /* cupom de impressora térmica */
+  align-self: center; width: min(320px, 100%); background: #FFFEF8; color: #222; padding: 14px 16px 12px; font: 13px/1.45 var(--mono);
+  box-shadow: 0 8px 22px rgba(15, 27, 45, .18); position: relative; animation: imprime .7s cubic-bezier(.2, .8, .2, 1) both;
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, radial-gradient(circle at 6px 8px, transparent 5px, #000 5.5px) bottom / 12px 8px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, radial-gradient(circle at 6px 8px, transparent 5px, #000 5.5px) bottom / 12px 8px repeat-x;
+  padding-bottom: 22px;
+}
+@keyframes imprime { from { clip-path: inset(0 0 100% 0); transform: translateY(-10px); } to { clip-path: inset(0 0 0 0); } }
+.cupom-topo { display: grid; text-align: center; gap: 1px; }
+.cupom-topo b { font-size: 16px; letter-spacing: .12em; }
+.cupom-topo span { font-size: 11.5px; color: #555; }
+.cupom-sep { border-top: 1.5px dashed #999; margin: 8px 0; }
+.cupom-missao { font-weight: 700; text-transform: uppercase; font-size: 12.5px; margin-bottom: 4px; }
+.cupom dl { margin: 0; display: grid; gap: 4px; }
+.cupom dl div { display: grid; grid-template-columns: auto 1fr; gap: 10px; }
+.cupom dt { color: #555; }
+.cupom dd { margin: 0; text-align: right; font-weight: 700; word-break: break-word; }
+.cupom-rodape { display: flex; justify-content: space-between; font-size: 11.5px; color: #555; margin-bottom: 6px; }
+.cupom-barras { display: block; width: 100%; height: 40px; }
+.cupom-barras rect { fill: #111; }
+.cupom-dica { margin: 8px 0 0; font: 600 11.5px var(--font); color: #9A3412; text-align: center; }
+
+@media (max-width: 600px) {
+  .opval input { width: 76px; font-size: 18px; }
+  .legend .lg-regra { margin-left: 0; }
+}
+
+/* na visão da loja a profundidade da pilha fica escondida (aparece em "Ver código e pilha") */
+.main.foco .sbadge { display: none; }

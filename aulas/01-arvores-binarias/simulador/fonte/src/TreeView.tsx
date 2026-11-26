@@ -1,10 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Id, Pending, Side, Slot, Tree } from './tracer';
+import { Barras, barras, eanDoCodigo } from './barras';
 
 export interface Pos { x: number; y: number }
 const W = 1000;
 const H = 520;
-const R = 25;
+// Cada nó é uma caixa de produto do estoque (largura BW x altura BH).
+const BW = 76;
+const BH = 56;
+const R = 30; // raio "efetivo" usado para posicionar vagas e selos
 
 export const slotKey = (s: Slot) => `${s.parent ?? 'r'}-${s.side ?? ''}`;
 
@@ -49,7 +53,8 @@ function layoutTree(t: Tree, pending?: Pending): Layout {
   if (root === null) slots.push({ parent: null, side: null });
   const top = 64;
   const spacing = Math.min(100, (W - 80) / Math.max(1, order.length));
-  const gap = Math.min(96, (H - top - 40) / (depth + 1));
+  // distância fixa entre níveis: caixas não encostam; árvores fundas só ficam mais altas (o enquadramento acompanha)
+  const gap = 96;
   const left = (W - spacing * order.length) / 2;
   const pos: Record<Id, Pos> = {};
   order.forEach((o, i) => { pos[o.id] = { x: left + (i + 0.5) * spacing, y: top + o.d * gap }; });
@@ -125,11 +130,11 @@ export function TreeView(p: TreeViewProps) {
   const rawP = (id: Id) => lay.pos[id];
   if (p.token) {
     const base = p.token.at !== null && lay.pos[p.token.at] ? lay.pos[p.token.at] : p.token.slot ? slotOf(p.token.slot, rawP) : null;
-    if (base) targets.token = { x: base.x + 58, y: base.y - 30 };
+    if (base) targets.token = { x: base.x + BW / 2 + 46, y: base.y - 16 };
   }
   // enquadramento: o "zoom" acompanha o tamanho da árvore (e também é animado)
   const pts: Pos[] = [...Object.values(lay.pos), ...lay.slots.map((s) => slotOf(s, rawP))];
-  if (targets.token) pts.push(targets.token);
+  if (targets.token) { pts.push(targets.token); pts.push({ x: targets.token.x + 150, y: targets.token.y }); }
   const xs = pts.map((q) => q.x), ys = pts.map((q) => q.y);
   let x0 = Math.min(...xs) - 70, x1 = Math.max(...xs) + 80;
   const y0 = Math.min(...ys) - 72;
@@ -148,14 +153,30 @@ export function TreeView(p: TreeViewProps) {
   const pendingAtNone = p.noneSlot && p.pending && p.pending.parent === p.noneSlot.parent && p.pending.side === p.noneSlot.side;
   const rootId = lay.root;
 
+  // a linha sai da borda da caixa de origem e para na borda da caixa de destino
+  const borda = (ux: number, uy: number, folga = 0) => Math.min(BW / 2 / Math.max(Math.abs(ux), 1e-6), BH / 2 / Math.max(Math.abs(uy), 1e-6)) + folga;
   const cut = (a: Pos, b: Pos) => {
     const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
-    return { x1: a.x + (dx / d) * R, y1: a.y + (dy / d) * R, x2: b.x - (dx / d) * (R + 2), y2: b.y - (dy / d) * (R + 2) };
+    const ux = dx / d, uy = dy / d;
+    const ra = borda(ux, uy), rb = borda(ux, uy, 3);
+    return { x1: a.x + ux * ra, y1: a.y + uy * ra, x2: b.x - ux * rb, y2: b.y - uy * rb };
   };
 
   return (
     <svg className="tree" viewBox={`${cur.vb0.x} ${cur.vb0.y} ${cur.vb1.x} ${cur.vb1.y}`} preserveAspectRatio="xMidYMid meet">
       <defs>
+        <pattern id="piso" width="80" height="80" patternUnits="userSpaceOnUse">
+          <rect width="80" height="80" fill="#E9EDF1" />
+          <path d="M80 0H0V80" fill="none" stroke="#D9DFE6" strokeWidth="2" />
+          <circle cx="40" cy="40" r="1.4" fill="#CBD3DC" />
+        </pattern>
+        <linearGradient id="papelao" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#D9AE74" />
+          <stop offset="1" stopColor="#BF8C52" />
+        </linearGradient>
+        <filter id="sombra" x="-30%" y="-30%" width="160%" height="170%">
+          <feDropShadow dx="0" dy="5" stdDeviation="3.5" floodColor="#0F1B2D" floodOpacity=".22" />
+        </filter>
         <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="#6B7A8F" />
         </marker>
@@ -163,6 +184,7 @@ export function TreeView(p: TreeViewProps) {
           <path d="M0,0 L10,5 L0,10 z" fill="#FF6A45" />
         </marker>
       </defs>
+      <rect className="piso" x={cur.vb0.x - 4000} y={cur.vb0.y - 4000} width={cur.vb1.x + 8000} height={cur.vb1.y + 8000} fill="url(#piso)" />
 
       {/* ponteiro raiz_completa */}
       {rootId !== null ? (() => {
@@ -247,17 +269,22 @@ export function TreeView(p: TreeViewProps) {
           <g key={`node-${id}-${wrong ? p.wrong!.nonce : ''}`} transform={`translate(${pos.x},${pos.y})`} className={cls.join(' ')}
             onClick={() => p.onPickNode?.(id)} role={p.onPickNode ? 'button' : undefined} aria-label={`nó ${n.valor}`}>
             <g className="node-body">
-              {(p.focus === id || p.found === id) && <circle className="pulse" r={R + 6} />}
-              <circle className="disc" r={R} />
-              <text className="val" dy="0.36em" textAnchor="middle">{n.valor}</text>
+              {(p.focus === id || p.found === id) && <rect className="pulse" x={-BW / 2 - 7} y={-BH / 2 - 7} width={BW + 14} height={BH + 14} rx={11} />}
+              <g className="caixa-g">
+                <rect className="caixa" x={-BW / 2} y={-BH / 2} width={BW} height={BH} rx={5} />
+                <rect className="fita" x={-7} y={-BH / 2} width={14} height={BH} />
+                <rect className="etiqueta" x={-BW / 2 + 8} y={-BH / 2 + 9} width={BW - 16} height={BH - 18} rx={3} />
+                <text className="val" y={-3} dy="0.36em" textAnchor="middle">{n.valor}</text>
+                <Barras bin={barras(eanDoCodigo(n.valor))} x={-BW / 2 + 13} y={8} w={BW - 26} h={8} />
+              </g>
               {stackIdx[id] && (
-                <g className="sbadge" transform={`translate(${-R + 2},${-R + 2})`}>
+                <g className="sbadge" transform={`translate(${-BW / 2 + 2},${-BH / 2 + 2})`}>
                   <circle r={10} />
                   <text dy="0.36em" textAnchor="middle">{stackIdx[id]}</text>
                 </g>
               )}
               {p.badges?.[id] !== undefined && (
-                <g className="obadge" transform={`translate(${R - 2},${-R + 2})`}>
+                <g className="obadge" transform={`translate(${BW / 2 - 2},${-BH / 2 + 2})`}>
                   <circle r={11} />
                   <text dy="0.36em" textAnchor="middle">{p.badges[id]}</text>
                 </g>
@@ -268,12 +295,40 @@ export function TreeView(p: TreeViewProps) {
       })}
 
       {/* valor "viajando" pela recursão */}
-      {p.token && cur.token && (
-        <g transform={`translate(${cur.token.x},${cur.token.y})`} className={`token ${p.token.busca ? 'busca' : ''}`}>
-          <rect x={-30} y={-17} width={60} height={34} rx={17} />
-          <text dy="0.36em" textAnchor="middle">{p.token.busca ? '🔍' : ''}{p.token.valor}</text>
-        </g>
-      )}
+      {p.token && cur.token && (() => {
+        const tk = p.token;
+        const alvo = tk.at !== null && p.tree.nodes[tk.at] ? p.tree.nodes[tk.at].valor : null;
+        let frase: string;
+        if (alvo === null) frase = tk.busca ? 'espaço vazio: não está no estoque' : 'espaço livre: a caixa entra aqui';
+        else if (tk.busca && tk.valor === alvo) frase = `${tk.valor} = ${alvo}: encontrado`;
+        else if (tk.valor < alvo) frase = `${tk.valor} < ${alvo} → esquerda`;
+        else frase = `${tk.valor} ${tk.valor === alvo ? '=' : '>'} ${alvo} → direita`;
+        const np = tk.at !== null && lay.pos[tk.at] ? P(tk.at) : null;
+        return (
+          <g className={`token ${tk.busca ? 'busca' : 'nova'}`}>
+            {tk.busca && np && (
+              <polygon className="laser" points={`${cur.token.x - 30},${cur.token.y + 4} ${np.x - BW / 2 + 10},${np.y + 4} ${np.x + BW / 2 - 10},${np.y + 18}`} />
+            )}
+            <g transform={`translate(${cur.token.x},${cur.token.y})`}>
+              {tk.busca ? (
+                <g className="leitor">
+                  <path d="M-34 -14 h44 a8 8 0 0 1 8 8 v8 a8 8 0 0 1 -8 8 h-16 l-6 22 h-12 l4 -22 h-14 a8 8 0 0 1 -8 -8 v-8 a8 8 0 0 1 8 -8z" />
+                  <rect className="visor" x={-24} y={-9} width={28} height={14} rx={3} />
+                  <text className="tk-val" x={-10} y={-2} dy="0.36em" textAnchor="middle">{tk.valor}</text>
+                </g>
+              ) : (
+                <g className="caixa-nova">
+                  <rect className="caixa" x={-26} y={-20} width={52} height={40} rx={4} />
+                  <rect className="fita" x={-5} y={-20} width={10} height={40} />
+                  <rect className="etiqueta" x={-19} y={-12} width={38} height={22} rx={2} />
+                  <text className="tk-val" y={-1} dy="0.36em" textAnchor="middle">{tk.valor}</text>
+                </g>
+              )}
+              <text className="comparacao" x={tk.busca ? 22 : 34} y={tk.busca ? 30 : 4} dy="0.36em">{frase}</text>
+            </g>
+          </g>
+        );
+      })()}
     </svg>
   );
 }

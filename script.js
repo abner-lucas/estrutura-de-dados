@@ -370,18 +370,6 @@
     addEventListener('hashchange', () => seguirEndereco(location.hash, true));
     if (location.hash) seguirEndereco(location.hash, true);
 
-    /* ================= CARTÕES QUE INCLINAM COM O PONTEIRO ================= */
-    if (!reduzir.matches && matchMedia('(hover: hover)').matches) {
-        $$('.no-card').forEach((c) => {
-            c.addEventListener('pointermove', (e) => {
-                const r = c.getBoundingClientRect();
-                const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-                c.style.transform = `perspective(900px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg) translateY(-6px)`;
-            });
-            c.addEventListener('pointerleave', () => { c.style.transform = ''; });
-        });
-    }
-
     /* ================= BUSCA NOS CÓDIGOS DAS AULAS ================= */
     const buscaCodigos = $('#busca-codigos');
     if (buscaCodigos) {

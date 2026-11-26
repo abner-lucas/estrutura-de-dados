@@ -4,6 +4,7 @@ import { emptyTree, runOp, runScript, sameSlot, traverseIds, treeFrom, type Id, 
 import { TreeView, slotKey, type Mark } from './TreeView';
 import { CodePanel, ConsolePanel, IfLogo, StackPanel, VarsPanel } from './panels';
 import { Challenges } from './Challenges';
+import { bipe, ligarSom, somLigado } from './som';
 
 type Nivel = 'nenhuma' | 'essenciais' | 'todas';
 type Visao = 'foco' | 'completo';
@@ -23,15 +24,15 @@ const INIT = {
   busca: parseNums(params.get('busca'))?.[0] ?? 30,
   // No Modo Foco (uso dos alunos com a ficha) as perguntas começam desligadas: quem conduz o ritmo é a ficha.
   nivel: (NIVEIS.includes(params.get('perguntas') as Nivel) ? params.get('perguntas') : VISAO_INIT === 'foco' ? 'nenhuma' : 'essenciais') as Nivel,
-  modo: params.get('modo') === 'desafios' ? 'desafios' : 'codigo',
+  modo: params.get('modo') === 'desafios' || params.get('modo') === 'missoes' ? 'desafios' : 'codigo',
   visao: VISAO_INIT,
 };
 
 // Cenários da ficha avaliativa: carregam a árvore pronta com um clique.
 type CenarioId = 'base' | 'ordenado';
-const CENARIOS: Record<CenarioId, { rotulo: string; titulo: string; numeros: number[]; valor: number }> = {
-  base: { rotulo: '📦 Parte A–C · Base', titulo: 'catálogo base (Partes A, B e C)', numeros: [45, 20, 60, 10, 30, 50, 70], valor: 30 },
-  ordenado: { rotulo: '📈 Parte D · Ordenados', titulo: 'códigos cadastrados em ordem (Parte D)', numeros: [10, 20, 30, 45, 50, 60, 70], valor: 70 },
+const CENARIOS: Record<CenarioId, { rotulo: string; dica: string; titulo: string; numeros: number[]; valor: number }> = {
+  base: { rotulo: 'Catálogo da loja', dica: 'Partes A, B e C', titulo: 'catálogo da loja', numeros: [45, 20, 60, 10, 30, 50, 70], valor: 30 },
+  ordenado: { rotulo: 'Cadastro em ordem', dica: 'Parte D', titulo: 'códigos cadastrados em ordem crescente', numeros: [10, 20, 30, 45, 50, 60, 70], valor: 70 },
 };
 
 const alturaDe = (t: Tree) => {
@@ -112,7 +113,7 @@ function Settings({ numeros, valorTeste, nivel, visao, onApply, onClose }: {
         <label>valor_teste = <input className="short" value={vt} onChange={(e) => setVt(e.target.value)} /></label>
         <button className="btn primary" onClick={() => onApply(nums, v)}>Aplicar e rodar o script</button>
         <button className="btn" onClick={() => { navigator.clipboard?.writeText(link()); setCopiado(true); setTimeout(() => setCopiado(false), 2000); }}>
-          {copiado ? '✔ Link copiado' : '🔗 Copiar link para os alunos'}
+          {copiado ? 'Link copiado' : 'Copiar link para os alunos'}
         </button>
         <button className="btn ghost" onClick={onClose} aria-label="Fechar">✕</button>
       </div>
@@ -136,6 +137,7 @@ export function App() {
     ? readyRun(INIT.numeros, params.get('numeros') ? 'árvore do professor' : CENARIOS.base.titulo)
     : runScript(INIT.numeros, INIT.busca, buildCode(INIT.numeros, INIT.busca).L)));
   const [cenario, setCenario] = useState<CenarioId | null>(INIT.visao === 'foco' && !params.get('numeros') ? 'base' : null);
+  const [som, setSom] = useState(somLigado());
   const [lastOp, setLastOp] = useState<LastOp>(null);
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
@@ -189,6 +191,15 @@ export function App() {
   const stepOut = () => runUntil((d) => d < d0);
   const toEnd = () => runUntil(() => false);
 
+  // som do leitor a cada passo de inserir/buscar (só se o aluno ligou o som)
+  useEffect(() => {
+    if (!som || idx === 0) return;
+    if (snap.found !== undefined && snap.found !== null) bipe('ok');
+    else if (token && token.at !== null) bipe('leitura');
+    else if (token && token.busca && token.slot) bipe('nao');
+    else if (snap.pending) bipe('cadastro');
+  }, [idx]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // reprodução automática: para sozinha nas perguntas
   useEffect(() => {
     if (!playing) return;
@@ -217,7 +228,7 @@ export function App() {
     setAnswers({ ...answers, [idx]: { tries: a.tries + 1, done: true, ok: first } });
     setScore((s) => ({ ok: s.ok + (first ? 1 : 0), total: s.total + 1 }));
     clearMarks();
-    setFeedback({ ok: true, text: `${first ? '✔ Correto!' : '✔ Agora sim!'} ${explain}` });
+    setFeedback({ ok: true, text: `${first ? 'Correto!' : 'Agora sim!'} ${explain}` });
     if (idx < last) setIdx(idx + 1);
   };
   const errou = (hint: string | undefined, mark: Mark | null, certo: Mark | null, respostaTxt: string, explain: string) => {
@@ -229,7 +240,7 @@ export function App() {
       setReveal(certo);
       setFeedback({ ok: false, text: `A resposta é: ${respostaTxt}. ${explain}` });
     } else {
-      setFeedback({ ok: false, text: `✖ Ainda não. ${hint ?? 'Releia a linha destacada com calma.'}` });
+      setFeedback({ ok: false, text: `Ainda não. ${hint ?? 'Releia a linha destacada com calma.'}` });
     }
   };
   const continuar = () => {
@@ -271,6 +282,7 @@ export function App() {
     start(readyRun(c.numeros, c.titulo));
   };
   const resumo = lastOp && idx >= last ? resumoDe(lastOp, run.final) : null;
+  useEffect(() => { if (params.get('cenario') === 'ordenado') carregar('ordenado'); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ------------------------------------------------------------ o que mostrar na árvore
   const opFrames = snap.stack.filter((f) => f.fn !== 'modulo' && f.fn !== 'init');
@@ -290,8 +302,8 @@ export function App() {
   if (mode === 'desafios') {
     return (
       <div className="app">
-        <Header mode={mode} setMode={setMode} score={null} onCfg={() => setShowCfg(!showCfg)} />
-        <Challenges onShowCode={(nums) => { setNumeros(nums); setMode('codigo'); runAll(nums, valorTeste); }} />
+        <Header mode={mode} setMode={setMode} score={null} onCfg={() => setShowCfg(!showCfg)} som={som} setSom={setSom} />
+        <Challenges som={som} onShowCode={(nums) => { setNumeros(nums); setMode('codigo'); runAll(nums, valorTeste); }} />
       </div>
     );
   }
@@ -300,7 +312,7 @@ export function App() {
 
   return (
     <div className="app">
-      <Header mode={mode} setMode={setMode} score={foco ? null : score} onCfg={() => setShowCfg(!showCfg)} />
+      <Header mode={mode} setMode={setMode} score={foco ? null : score} onCfg={() => setShowCfg(!showCfg)} som={som} setSom={setSom} />
       {showCfg && (
         <Settings numeros={numeros} valorTeste={valorTeste} nivel={nivel} visao={visao} onClose={() => setShowCfg(false)}
           onApply={(n, v) => { setNumeros(n); setValorTeste(v); runAll(n, v); setShowCfg(false); }} />
@@ -309,18 +321,18 @@ export function App() {
         {foco ? (
           (Object.keys(CENARIOS) as CenarioId[]).map((id) => (
             <button key={id} className={`btn cen ${cenario === id ? 'on' : ''}`} onClick={() => carregar(id)}
-              title={`Carrega a árvore [${CENARIOS[id].numeros.join(', ')}] já pronta`}>{CENARIOS[id].rotulo}</button>
+              title={`Carrega a árvore [${CENARIOS[id].numeros.join(', ')}] já pronta`}><b>{CENARIOS[id].rotulo}</b><small>{CENARIOS[id].dica}</small></button>
           ))
         ) : (
-          <button className="btn primary" onClick={() => runAll()}>▶ Rodar o script inteiro</button>
+          <button className="btn primary" onClick={() => runAll()}>Rodar o script inteiro</button>
         )}
         <span className="sep" />
-        <label className="opval">valor <input value={opVal} onChange={(e) => setOpVal(e.target.value)} inputMode="numeric" aria-label="valor" /></label>
-        <button className="btn" onClick={() => op('inserir')} disabled={val === undefined}>inserir</button>
-        <button className="btn" onClick={() => op('buscar')} disabled={val === undefined || tree.root === null}>buscar</button>
+        <label className="opval"><span>código</span><input value={opVal} onChange={(e) => setOpVal(e.target.value)} inputMode="numeric" aria-label="código do produto (valor)" /></label>
+        <button className="btn op" onClick={() => op('inserir')} disabled={val === undefined}><b>inserir</b><small>cadastrar</small></button>
+        <button className="btn op" onClick={() => op('buscar')} disabled={val === undefined || tree.root === null}><b>buscar</b><small>consultar</small></button>
         <span className="sep" />
         {travs.map((k) => (
-          <button key={k} className="btn" onClick={() => op(k)} disabled={tree.root === null}>{k}</button>
+          <button key={k} className="btn op" onClick={() => op(k)} disabled={tree.root === null}><b>{k}</b>{k === 'em_ordem' && <small>relatório</small>}</button>
         ))}
         {!foco && (
           <>
@@ -337,7 +349,7 @@ export function App() {
         )}
         <button className={`btn ghost visao-toggle ${foco ? '' : 'on'}`} onClick={() => setVisao(foco ? 'completo' : 'foco')}
           title={foco ? 'Mostra o código Python, a pilha de chamadas, as variáveis e a saída do print' : 'Volta para a visão simplificada usada na ficha'}>
-          {foco ? '💻 Código + Pilha' : '🎯 Voltar ao Modo Foco'}
+          {foco ? 'Ver código e pilha' : 'Voltar à visão da loja'}
         </button>
       </div>
 
@@ -345,23 +357,24 @@ export function App() {
         <div className="left">
           <section className="panel tree-panel">
             <h3 className="tree-head">
-              Árvore <small>{run.title}</small>
+              <span className="placa">Depósito</span> <small>{run.title}</small>
               <span className="counters" aria-live="polite">
-                <span className="counter">nós: <b>{totalNos}</b></span>
-                <span className="counter">níveis (altura): <b>{niveis}</b></span>
+                <span className="counter">nós (produtos) <b>{totalNos}</b></span>
+                <span className="counter">níveis (altura) <b>{niveis}</b></span>
               </span>
             </h3>
             <TreeView tree={snap.tree} pending={snap.pending} flash={snap.flash} flashKey={idx} focus={focus} stack={stackIds}
               noneSlot={noneSlot} token={token} done={snap.done} appended={snap.appended} found={snap.found} badges={badges}
               onPickNode={q?.kind === 'node' && !revealed ? answerNode : undefined}
               onPickSlot={q?.kind === 'slot' && !revealed ? answerSlot : undefined}
-              wrong={wrong} reveal={reveal} tweenMs={tweenMs} emptyText="raiz_completa = None (árvore vazia)" />
+              wrong={wrong} reveal={reveal} tweenMs={tweenMs} emptyText="estoque vazio · raiz_completa = None" />
             {foco ? (
               <div className="legend">
-                <span><i className="lg focus" /> nó sendo comparado agora</span>
-                <span><i className="lg tok">30</i> valor inserido / procurado</span>
-                <span><i className="lg done" /> já entrou na lista (em_ordem)</span>
+                <span><i className="lg focus" /> caixa sendo comparada</span>
+                <span><i className="lg tok">30</i> caixa nova (inserir) ou leitor (buscar)</span>
+                <span><i className="lg done" /> já no relatório (em_ordem)</span>
                 <span><i className="lg found" /> encontrado</span>
+                <span className="lg-regra">menor ← | → maior ou igual</span>
               </div>
             ) : (
               <div className="legend">
@@ -383,7 +396,7 @@ export function App() {
             </div>
             {q && (
               <div className="ask">
-                <div className="ask-title">🤔 Sua vez: {q.text}</div>
+                <div className="ask-title">Sua vez: {q.text}</div>
                 {q.kind === 'choice' ? (
                   <div className="ask-opts">
                     {q.options.map((o, i) => (
@@ -392,27 +405,27 @@ export function App() {
                     ))}
                   </div>
                 ) : (
-                  <p className="ask-hint">👆 {q.kind === 'node' ? 'Clique em um nó da árvore.' : 'Clique em uma vaga ⊕ na árvore.'}</p>
+                  <p className="ask-hint">{q.kind === 'node' ? 'Clique em uma caixa da árvore.' : 'Clique em um espaço vazio (+) da árvore.'}</p>
                 )}
-                {revealed && <button className="btn primary" onClick={continuar}>Entendi, continuar ▶</button>}
+                {revealed && <button className="btn primary" onClick={continuar}>Entendi, continuar</button>}
               </div>
             )}
           </section>
 
           <div className="controls">
-            <button className="btn icon" onClick={() => go(0)} title="Voltar ao início" aria-label="Voltar ao início">⏮</button>
-            <button className="btn" onClick={back} disabled={idx === 0}>◀ Voltar</button>
-            <button className="btn primary big" onClick={() => next()} disabled={!canNext}>Próximo passo ▶</button>
+            <button className="btn icon" onClick={() => go(0)} title="Voltar ao início" aria-label="Voltar ao início">↺</button>
+            <button className="btn" onClick={back} disabled={idx === 0}>← Voltar</button>
+            <button className="btn primary big" onClick={() => next()} disabled={!canNext}>Próximo passo →</button>
             {foco ? (
-              <button className="btn" onClick={toEnd} disabled={!canNext} title="Avança até o fim da operação e mostra o resultado">⏭ Ir ao resultado</button>
+              <button className="btn" onClick={toEnd} disabled={!canNext} title="Avança até o fim da operação e mostra o resultado">Ir ao resultado</button>
             ) : (
               <>
-                <button className="btn" onClick={stepOver} disabled={!canNext} title="Executa a chamada inteira e para quando ela devolver o resultado">⤼ Pular chamada</button>
-                <button className="btn" onClick={stepOut} disabled={!canNext} title="Executa até a função atual terminar">⤴ Terminar função</button>
+                <button className="btn" onClick={stepOver} disabled={!canNext} title="Executa a chamada inteira e para quando ela devolver o resultado">Pular chamada</button>
+                <button className="btn" onClick={stepOut} disabled={!canNext} title="Executa até a função atual terminar">Terminar função</button>
               </>
             )}
-            <button className="btn" onClick={() => setPlaying(!playing)} disabled={!canNext && !playing}>{playing ? '⏸ Pausar' : '⏵ Reproduzir'}</button>
-            <label className="speed" title="Velocidade da reprodução">🐢<input type="range" min={0.5} max={4} step={0.5} value={speed} onChange={(e) => setSpeed(+e.target.value)} />🐇</label>
+            <button className="btn" onClick={() => setPlaying(!playing)} disabled={!canNext && !playing}>{playing ? 'Pausar' : 'Reproduzir'}</button>
+            <label className="speed" title="Velocidade da reprodução"><span>lento</span><input type="range" min={0.5} max={4} step={0.5} value={speed} onChange={(e) => setSpeed(+e.target.value)} aria-label="velocidade" /><span>rápido</span></label>
             <div className="prog">
               <div className="bar"><div style={{ width: `${((idx + 1) / run.snaps.length) * 100}%` }} /></div>
               <span>{q ? 'responda para continuar' : `passo ${idx + 1} de ${run.snaps.length}`}</span>
@@ -438,20 +451,24 @@ export function App() {
   );
 }
 
-function Header({ mode, setMode, score, onCfg }: { mode: string; setMode: (m: string) => void; score: { ok: number; total: number } | null; onCfg: () => void }) {
+function Header({ mode, setMode, score, onCfg, som, setSom }: {
+  mode: string; setMode: (m: string) => void; score: { ok: number; total: number } | null; onCfg: () => void; som: boolean; setSom: (b: boolean) => void;
+}) {
   return (
     <header className="topbar">
       <IfLogo />
       <div className="title">
-        <h1>Simulador de Árvore Binária de Busca</h1>
-        <span>Estrutura de Dados · o código Python executando, linha por linha</span>
+        <h1>Estoque ABB</h1>
+        <span>Simulador de árvore binária de busca · Estrutura de Dados</span>
       </div>
-      <nav className="modes">
-        <button className={mode === 'codigo' ? 'on' : ''} onClick={() => setMode('codigo')}>▶ Executar o código</button>
-        <button className={mode === 'desafios' ? 'on' : ''} onClick={() => setMode('desafios')}>🎯 Desafios</button>
+      <nav className="modes" aria-label="Telas do simulador">
+        <button className={mode === 'codigo' ? 'on' : ''} onClick={() => setMode('codigo')} aria-pressed={mode === 'codigo'}>Simulador</button>
+        <button className={mode === 'desafios' ? 'on' : ''} onClick={() => setMode('desafios')} aria-pressed={mode === 'desafios'}>Missões</button>
       </nav>
-      {score && <div className="score" title="Perguntas acertadas na primeira tentativa">🎯 {score.ok}/{score.total} de primeira</div>}
-      {mode === 'codigo' && <button className="btn ghost light" onClick={onCfg}>⚙ Professor</button>}
+      {score && <div className="score" title="Perguntas acertadas na primeira tentativa">{score.ok}/{score.total} de primeira</div>}
+      <button className={`btn ghost light som ${som ? 'on' : ''}`} aria-pressed={som} onClick={() => { const v = !som; ligarSom(v); setSom(v); }}
+        title="Bipe do leitor a cada caixa comparada">Som {som ? 'ligado' : 'desligado'}</button>
+      {mode === 'codigo' && <button className="btn ghost light" onClick={onCfg}>Professor</button>}
       <a className="btn ghost light portal-link" href="../../../index.html#atividades" title="Voltar ao portal de Estrutura de Dados">← Portal</a>
     </header>
   );

@@ -859,7 +859,6 @@ html:not(.js) .etiqueta span { clip-path: none; }
 
 /* ---------- atividades: a aula em destaque é o nó invertido ---------- */
 .nos-atividades { grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 1fr)); }
-.no-card { transform-style: preserve-3d; will-change: transform; }
 .no-card.destaque { background: var(--palco); border-color: var(--palco); color: var(--palco-tinta); }
 .no-card.destaque h3 { color: #fff; font-size: 1.6rem; }
 .no-card.destaque p, .no-card.destaque .no-cat { color: var(--palco-tinta-2); }

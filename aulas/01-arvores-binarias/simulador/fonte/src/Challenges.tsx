@@ -5,6 +5,41 @@ import {
   emptyTree, finalSlot, insertPlain, pathText, REGRA, HINT, sameSlot, traverseIds, treeFrom,
   type Id, type Slot, type Tree,
 } from './tracer';
+import { BarrasSvg } from './barras';
+import { bipe } from './som';
+
+// ------------------------------------------------------------------ cupom de comprovante
+// Ao terminar uma missão, o simulador "imprime" um cupom com os dados sorteados e o resultado.
+// O aluno copia esses dados na ficha e cola um print do cupom (entrega pelo SIGAA).
+type Linha = [string, string];
+function codigoDoCupom(texto: string) {
+  let h = 2166136261;
+  for (let i = 0; i < texto.length; i++) { h ^= texto.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(36).toUpperCase().padStart(7, '0').slice(0, 7);
+}
+function Cupom({ missao, linhas }: { missao: string; linhas: Linha[] }) {
+  const quando = useMemo(() => new Date(), []);
+  const dataHora = quando.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+  const codigo = codigoDoCupom(missao + linhas.map((l) => l.join('=')).join('|') + quando.getTime());
+  return (
+    <div className="cupom" role="region" aria-label={`Comprovante da missão ${missao}`}>
+      <div className="cupom-topo">
+        <b>ESTOQUE ABB</b>
+        <span>Estrutura de Dados · IFPA Campus Breves</span>
+        <span>COMPROVANTE DE MISSÃO</span>
+      </div>
+      <div className="cupom-sep" />
+      <div className="cupom-missao">{missao}</div>
+      <dl>
+        {linhas.map(([k, v]) => (<div key={k}><dt>{k}</dt><dd>{v}</dd></div>))}
+      </dl>
+      <div className="cupom-sep" />
+      <div className="cupom-rodape"><span>{dataHora}</span><span>nº {codigo}</span></div>
+      <BarrasSvg valor={codigo} />
+      <p className="cupom-dica">Tire um print desta tela e cole na ficha, na Parte E.</p>
+    </div>
+  );
+}
 
 const clone = <T,>(x: T): T => structuredClone(x);
 const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
@@ -28,7 +63,7 @@ function Feedback({ msg }: { msg: Msg }) {
 }
 
 // ------------------------------------------------------------------ 1. Monte a árvore
-function Montar({ onShowCode }: { onShowCode: (nums: number[]) => void }) {
+function Montar({ onShowCode, som }: { onShowCode: (nums: number[]) => void; som: boolean }) {
   const [nums, setNums] = useState(() => randomList(7));
   const [k, setK] = useState(0);
   const [t, setT] = useState<Tree>(emptyTree());
@@ -48,17 +83,19 @@ function Montar({ onShowCode }: { onShowCode: (nums: number[]) => void }) {
     if (sameSlot(s, exp)) {
       const nt = clone(t);
       insertPlain(nt, v);
-      setMsg({ ok: true, text: exp.parent === null ? `✔ O ${v} é o primeiro: vira a raiz.` : `✔ Isso! ${pathText(t, v)} → vaga vazia.` });
+      if (som) bipe(k + 1 >= nums.length ? 'ok' : 'cadastro');
+      setMsg({ ok: true, text: exp.parent === null ? `O ${v} é o primeiro: vira a raiz.` : `Isso! ${pathText(t, v)} → espaço vazio.` });
       setT(nt); setK(k + 1); setTries(0); setWrong(null); setReveal(null);
     } else {
       const n = tries + 1;
       setErrs(errs + 1); setTries(n);
+      if (som) bipe('nao');
       setWrong({ type: 'slot', id: slotKey(s), nonce: Date.now() });
       if (n >= 2) {
         setReveal({ type: 'slot', id: slotKey(exp), nonce: Date.now() });
-        setMsg({ ok: false, text: `✖ Veja o caminho completo: ${pathText(t, v)}. A vaga certa está piscando.` });
+        setMsg({ ok: false, text: `Veja o caminho completo: ${pathText(t, v)}. O espaço certo está piscando.` });
       } else {
-        setMsg({ ok: false, text: `✖ Não é aí. Sempre comece pela raiz: ${pathText(t, v, 1)} …` });
+        setMsg({ ok: false, text: `Não é aí. Sempre comece pela raiz: ${pathText(t, v, 1)} …` });
       }
     }
   };
@@ -67,29 +104,29 @@ function Montar({ onShowCode }: { onShowCode: (nums: number[]) => void }) {
     <div className="ch-body">
       <div className="ch-side">
         <h2>Monte a árvore</h2>
-        <p>Insira os números <b>na ordem</b>, clicando na vaga ⊕ onde cada um vai ficar. Ninguém te diz a resposta: compare com a raiz e desça.</p>
+        <p>Chegou um lote de caixas. Cadastre os códigos <b>na ordem da fila</b>, clicando no espaço vazio (+) onde cada caixa vai ficar. Compare com a raiz e desça.</p>
         <div className="ch-queue">{nums.map((n, i) => <b key={i} className={i < k ? 'past' : i === k ? 'cur' : ''}>{n}</b>)}</div>
         {!fim && <div className="ch-now">Agora: <b>{v}</b></div>}
         <Feedback msg={msg} />
         {fim && (
           <div className="ch-end">
-            <p>🌳 Árvore completa! Erros: <b>{errs}</b>.</p>
-            <button className="btn primary" onClick={() => onShowCode(nums)}>Ver o código construindo esta árvore, passo a passo</button>
+            <Cupom missao="1 · Monte a árvore" linhas={[['Os 7 números', nums.join(', ')], ['Raiz', String(nums[0])], ['Nº de erros', String(errs)]]} />
+            <button className="btn" onClick={() => onShowCode(nums)}>Ver esta árvore sendo montada no simulador</button>
           </div>
         )}
         <button className="btn" onClick={reset}>Nova rodada</button>
       </div>
       <div className="ch-tree">
-        <TreeView tree={t} onPickSlot={fim ? undefined : choose} wrong={wrong} reveal={reveal} emptyText="Árvore vazia: clique na vaga para colocar a raiz" />
+        <TreeView tree={t} onPickSlot={fim ? undefined : choose} wrong={wrong} reveal={reveal} emptyText="estoque vazio: clique no + para colocar a raiz" />
       </div>
     </div>
   );
 }
 
 // ------------------------------------------------------------------ 2. Ordem de visita
-function Percurso() {
+function Percurso({ som }: { som: boolean }) {
   const [t, setT] = useState(() => treeFrom(randomList(8)));
-  const [kind, setKind] = useState<TravKind>(() => pick(['em_ordem', 'pre_ordem', 'pos_ordem'] as TravKind[]));
+  const [kind, setKind] = useState<TravKind>('em_ordem');
   const order = useMemo(() => traverseIds(t, kind), [t, kind]);
   const [k, setK] = useState(0);
   const [errs, setErrs] = useState(0);
@@ -107,15 +144,17 @@ function Percurso() {
     if (fim || badges[id] !== undefined) return;
     if (id === order[k]) {
       setK(k + 1); setTries(0); setWrong(null); setReveal(null);
-      setMsg({ ok: true, text: `✔ ${t.nodes[id].valor} entra na lista.` });
+      if (som) bipe(k + 1 >= order.length ? 'ok' : 'leitura');
+      setMsg({ ok: true, text: `${t.nodes[id].valor} entra na lista.` });
     } else {
       const n = tries + 1;
       setErrs(errs + 1); setTries(n);
+      if (som) bipe('nao');
       setWrong({ type: 'node', id: String(id), nonce: Date.now() });
       if (n >= 2) {
         setReveal({ type: 'node', id: String(order[k]), nonce: Date.now() });
-        setMsg({ ok: false, text: `✖ O próximo é o ${t.nodes[order[k]].valor} (piscando). ${HINT[kind]}` });
-      } else setMsg({ ok: false, text: `✖ Ainda não. ${HINT[kind]}` });
+        setMsg({ ok: false, text: `O próximo é o ${t.nodes[order[k]].valor} (piscando). ${HINT[kind]}` });
+      } else setMsg({ ok: false, text: `Ainda não. ${HINT[kind]}` });
     }
   };
 
@@ -128,13 +167,12 @@ function Percurso() {
             <button key={kk} className={kk === kind ? 'on' : ''} onClick={() => restart(t, kk)}>{kk.replace('_', '-')}</button>
           ))}
         </div>
-        <p><b>{REGRA[kind]}</b>. Clique nos nós na ordem em que <code>elementos.append</code> acontece.</p>
+        <p>O gerente pediu o relatório. <b>{REGRA[kind]}</b>: clique nas caixas na ordem em que elas entram na lista (<code>elementos.append</code>).</p>
         <div className="ch-queue">[{order.slice(0, k).map((id, i) => <b key={i}>{t.nodes[id].valor}</b>)}{!fim && <i>?</i>}]</div>
         <Feedback msg={msg} />
         {fim && (
           <div className="ch-end">
-            <p>✔ Completo! Erros: <b>{errs}</b>.</p>
-            <pre className="ch-print">{`>>> abb.${kind}(raiz)\n[${order.map((id) => t.nodes[id].valor).join(', ')}]`}</pre>
+            <Cupom missao={`2 · Ordem de visita (${kind})`} linhas={(() => { const vs = order.map((id) => t.nodes[id].valor); return [['Menor e maior nó', `${Math.min(...vs)} e ${Math.max(...vs)}`], ['Lista final gerada', `[${vs.join(', ')}]`], ['Nº de erros', String(errs)]] as Linha[]; })()} />
           </div>
         )}
         <button className="btn" onClick={() => restart(treeFrom(randomList(8)), kind)}>Nova árvore</button>
@@ -156,7 +194,7 @@ function novaBusca() {
   return { t, alvo };
 }
 
-function Busca() {
+function Busca({ som }: { som: boolean }) {
   const [{ t, alvo }, setJogo] = useState(novaBusca);
   const caminho = useMemo(() => {
     const ids: Id[] = [];
@@ -188,8 +226,9 @@ function Busca() {
   const errar = (mark: Mark, certo: Mark, dica: string) => {
     const n = tries + 1;
     setErrs(errs + 1); setTries(n); setWrong(mark);
-    if (n >= 2) { setReveal(certo); setMsg({ ok: false, text: `✖ O próximo passo está piscando. ${dica}` }); }
-    else setMsg({ ok: false, text: `✖ ${dica}` });
+    if (som) bipe('nao');
+    if (n >= 2) { setReveal(certo); setMsg({ ok: false, text: `O próximo passo está piscando. ${dica}` }); }
+    else setMsg({ ok: false, text: dica });
   };
   const certoAgora = (): Mark => (k < caminho.ids.length
     ? { type: 'node', id: String(caminho.ids[k]), nonce: Date.now() }
@@ -200,15 +239,16 @@ function Busca() {
     if (fim || caminho.ids.slice(0, k).includes(id)) return;
     if (k < caminho.ids.length && id === caminho.ids[k]) {
       setK(k + 1); setTries(0); setWrong(null); setReveal(null);
-      if (t.nodes[id].valor === alvo) { setFim('achou'); setMsg({ ok: true, text: `✔ ${alvo} == ${alvo}: encontrado em ${k + 1} chamada(s) de buscar!` }); }
-      else setMsg({ ok: true, text: `✔ buscar(raiz=${t.nodes[id].valor}, valor=${alvo})` });
+      if (t.nodes[id].valor === alvo) { if (som) bipe('ok'); setFim('achou'); setMsg({ ok: true, text: `${alvo} == ${alvo}: encontrado em ${k + 1} chamada(s) de buscar!` }); }
+      else { if (som) bipe('leitura'); setMsg({ ok: true, text: `buscar(raiz=${t.nodes[id].valor}, valor=${alvo})` }); }
     } else errar({ type: 'node', id: String(id), nonce: Date.now() }, certoAgora(), dica());
   };
   const clickSlot = (s: Slot) => {
     if (fim) return;
     if (caminho.fimSlot && k === caminho.ids.length && sameSlot(s, caminho.fimSlot)) {
       setFim('none'); setTries(0); setWrong(null); setReveal(null);
-      setMsg({ ok: true, text: `✔ Chegou em None: o ${alvo} NÃO está na árvore (return None).` });
+      if (som) bipe('nao');
+      setMsg({ ok: true, text: `Chegou em None: o ${alvo} NÃO está no estoque (return None).` });
     } else errar({ type: 'slot', id: slotKey(s), nonce: Date.now() }, certoAgora(), dica());
   };
 
@@ -216,10 +256,15 @@ function Busca() {
     <div className="ch-body">
       <div className="ch-side">
         <h2>Caminho da busca</h2>
-        <p>Faça o papel do <code>buscar</code>: clique nos nós que ele visita, em ordem, procurando o <b className="alvo">{alvo}</b>. Se chegar a uma vaga vazia, clique nela (é o <code>None</code>).</p>
+        <p>Um cliente pediu o produto <b className="alvo">{alvo}</b>. Faça o papel do leitor (<code>buscar</code>): clique nas caixas que ele visita, em ordem. Se chegar a um espaço vazio, clique nele (é o <code>None</code>).</p>
         <div className="ch-queue">{caminho.ids.slice(0, k).map((id, i) => <b key={i}>{t.nodes[id].valor}</b>)}{!fim && <i>?</i>}</div>
         <Feedback msg={msg} />
-        {fim && <div className="ch-end"><p>Erros: <b>{errs}</b>. Repare: a busca visitou só {caminho.ids.length} de {Object.keys(t.nodes).length} nós.</p></div>}
+        {fim && (
+          <div className="ch-end">
+            <p>A busca visitou só {caminho.ids.length} de {Object.keys(t.nodes).length} caixas.</p>
+            <Cupom missao="3 · Caminho da busca" linhas={[['Valor buscado', String(alvo)], ['Encontrou?', fim === 'achou' ? 'Sim' : 'Não'], ['Caminho', caminho.ids.map((id) => t.nodes[id].valor).join(' → ') + (fim === 'none' ? ' → None' : '')], ['Nº de erros', String(errs)]]} />
+          </div>
+        )}
         <button className="btn" onClick={restart}>Nova busca</button>
       </div>
       <div className="ch-tree">
@@ -232,7 +277,7 @@ function Busca() {
 
 // ------------------------------------------------------------------
 type Kind = 'montar' | 'percurso' | 'busca';
-export function Challenges({ onShowCode }: { onShowCode: (nums: number[]) => void }) {
+export function Challenges({ onShowCode, som }: { onShowCode: (nums: number[]) => void; som: boolean }) {
   const [kind, setKind] = useState<Kind>('montar');
   return (
     <div className="challenges">
@@ -241,7 +286,7 @@ export function Challenges({ onShowCode }: { onShowCode: (nums: number[]) => voi
         <button className={kind === 'percurso' ? 'on' : ''} onClick={() => setKind('percurso')}>2 · Ordem de visita</button>
         <button className={kind === 'busca' ? 'on' : ''} onClick={() => setKind('busca')}>3 · Caminho da busca</button>
       </nav>
-      {kind === 'montar' ? <Montar onShowCode={onShowCode} /> : kind === 'percurso' ? <Percurso /> : <Busca />}
+      {kind === 'montar' ? <Montar onShowCode={onShowCode} som={som} /> : kind === 'percurso' ? <Percurso som={som} /> : <Busca som={som} />}
     </div>
   );
 }

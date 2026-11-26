@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório · Estoque com árvore binária de busca · Estrutura de Dados</title>
+    <meta name="description" content="Orientações passo a passo do laboratório de árvore binária de busca no simulador Estoque ABB, com a ficha do aluno para baixar e entregar no SIGAA.">
+    <meta name="theme-color" content="#eef2f6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a101b" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1b2d'/%3E%3Crect x='7' y='9' width='18' height='14' rx='2' fill='%23d9ae74'/%3E%3Crect x='14' y='9' width='4' height='14' fill='%23e8c88f'/%3E%3C/svg%3E">
+    <script>
+        (function () {
+            var d = document.documentElement;
+            try {
+                var salvo = localStorage.getItem('ed:tema');
+                var escuro = salvo ? salvo === 'escuro' : matchMedia('(prefers-color-scheme: dark)').matches;
+                d.dataset.tema = escuro ? 'escuro' : 'claro';
+            } catch (e) { d.dataset.tema = 'claro'; }
+            d.classList.add('js');
+            d.dataset.visitado = '';
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../style.css?v=2026.11.25b">
+    <link rel="stylesheet" href="laboratorio.css?v=2026.11.25b">
+</head>
+<body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+    <div class="progresso" aria-hidden="true"><span id="progresso-barra"></span></div>
+
+    <header class="topo" id="topo">
+        <div class="topo-inner">
+            <a href="../../../index.html#atividades" class="marca" aria-label="Voltar ao portal de Estrutura de Dados">
+                <svg class="marca-simbolo" viewBox="0 0 54 22" aria-hidden="true">
+                    <rect class="m-no" x="1" y="4" width="12" height="14" rx="3" />
+                    <path class="m-seta" d="M14 11h7m-3-3 3 3-3 3" />
+                    <rect class="m-no" x="22" y="4" width="12" height="14" rx="3" />
+                    <path class="m-seta" d="M35 11h7m-3-3 3 3-3 3" />
+                    <circle class="m-null" cx="48" cy="11" r="3.4" />
+                </svg>
+                <span class="marca-texto">Estrutura de <em>Dados</em></span>
+            </a>
+            <nav class="menu" id="menu" aria-label="Partes do laboratório">
+                <a href="#antes">Antes</a>
+                <a href="#parte-a">A</a>
+                <a href="#parte-b">B</a>
+                <a href="#parte-c">C</a>
+                <a href="#parte-d">D</a>
+                <a href="#parte-e">E</a>
+                <a href="#parte-f">F</a>
+                <a href="#entrega">Entrega</a>
+                <a href="#termos">Termos</a>
+            </nav>
+            <div class="topo-acoes">
+                <button class="botao-tema" id="botao-tema" type="button" aria-label="Alternar modo escuro" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path class="bit-cheio" d="M12 3.5a8.5 8.5 0 0 1 0 17z" /></svg>
+                </button>
+                <button class="botao-menu" id="botao-menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <main id="conteudo" data-glossario>
+
+        <!-- ============ ABERTURA ============ -->
+        <section class="lab-abertura">
+            <div class="moldura lab-abertura-grade">
+                <div class="lab-abertura-texto">
+                    <p class="lab-trilha"><a href="../../../index.html#atividades">Portal</a> <span aria-hidden="true">›</span> <a href="../">Árvores binárias</a> <span aria-hidden="true">›</span> <span>Laboratório</span></p>
+                    <h1 class="lab-titulo">O estoque da loja numa <em>árvore de busca</em></h1>
+                    <p class="lab-lede">Você vai usar o simulador <b>Estoque ABB</b> para cadastrar, procurar e listar códigos de produtos, e ver na prática por que a árvore deixa a busca rápida e quando ela deixa de ser. As respostas vão na ficha, que você entrega pelo SIGAA.</p>
+                    <div class="lab-acoes">
+                        <a class="botao botao-cheio" href="../simulador/" target="_blank" rel="noopener">
+                            Abrir o simulador
+                            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" /></svg>
+                            <span class="sr-only">(abre em nova aba)</span>
+                        </a>
+                        <a class="botao botao-linha" href="ficha-aluno-abb.docx" download>
+                            Baixar a ficha (.docx)
+                            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m-4-4 4 4 4-4M4 16h12" /></svg>
+                        </a>
+                    </div>
+                    <p class="lab-progresso" aria-live="polite"><span id="feitos-n">0</span> de <span id="feitos-total">0</span> passos marcados como feitos</p>
+                </div>
+
+                <!-- A regra em uma imagem: a caixa nova compara com a raiz -->
+                <figure class="regra-figura" aria-label="A regra da árvore: códigos menores vão para a esquerda, maiores ou iguais para a direita">
+                    <div class="regra-caixa regra-raiz"><b>45</b><i></i></div>
+                    <div class="regra-ramos" aria-hidden="true">
+                        <span class="regra-esq">menor ←</span>
+                        <span class="regra-dir">→ maior ou igual</span>
+                    </div>
+                    <div class="regra-filhos">
+                        <div class="regra-caixa"><b>20</b><i></i></div>
+                        <div class="regra-caixa"><b>60</b><i></i></div>
+                    </div>
+                    <figcaption>A única regra: cada código desce comparando com as caixas. Menor vai para a esquerda; maior ou igual, para a direita.</figcaption>
+                </figure>
+            </div>
+
+            <!-- percurso clicável -->
+            <nav class="moldura percurso" aria-label="Percurso do laboratório">
+                <ol>
+                    <li><a href="#antes"><b>0</b><span>Antes de começar</span></a></li>
+                    <li><a href="#parte-a"><b>A</b><span>O catálogo da loja</span></a></li>
+                    <li><a href="#parte-b"><b>B</b><span>Leitor e relatório</span></a></li>
+                    <li><a href="#parte-c"><b>C</b><span>Seus dois produtos</span></a></li>
+                    <li><a href="#parte-d"><b>D</b><span>Cadastro em ordem</span></a></li>
+                    <li><a href="#parte-e"><b>E</b><span>Missões</span></a></li>
+                    <li><a href="#parte-f"><b>F</b><span>Para fechar</span></a></li>
+                    <li><a href="#entrega"><b>↗</b><span>Entrega no SIGAA</span></a></li>
+                </ol>
+            </nav>
+        </section>
+
+        <!-- ============ ANTES DE COMEÇAR ============ -->
+        <section id="antes" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="0">
+                    <div>
+                        <p class="etiqueta"><span>preparar a bancada</span></p>
+                        <h2 class="titulo" data-palavras>Antes de começar</h2>
+                    </div>
+                    <p class="cabecalho-desc">Deixe a ficha e o simulador abertos lado a lado. Você vai alternar entre os dois o tempo todo.</p>
+                </header>
+
+                <ol class="passos">
+                    <li class="passo" data-passo="antes-1">
+                        <p class="faca">Clique em <a href="ficha-aluno-abb.docx" download><b>Baixar a ficha (.docx)</b></a> e abra o arquivo baixado.</p>
+                        <p class="veja">Abre um documento de cinco páginas com as Partes A a F. Os campos laranja são para a sua previsão; os verdes, para o que o simulador mostrar.</p>
+                        <details class="socorro">
+                            <summary>Não tenho Word. Como abro?</summary>
+                            <p><b>LibreOffice Writer</b>: clique com o botão direito no arquivo › <b>Abrir com</b> › <b>LibreOffice Writer</b>.</p>
+                            <p><b>Google Docs</b>: acesse <a href="https://drive.google.com" target="_blank" rel="noopener">drive.google.com</a>, clique em <b>Novo › Upload de arquivo</b> (em algumas versões, <b>Novo › Fazer upload de arquivo</b>), escolha a ficha e, depois que ela aparecer, clique duas vezes nela e em <b>Abrir com Documentos Google</b>.</p>
+                        </details>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="antes-2">
+                        <p class="faca">Abra o simulador em outra aba: <a href="../simulador/" target="_blank" rel="noopener"><b>Abrir o simulador</b></a>.</p>
+                        <p class="veja">No topo aparece <b>Estoque ABB</b>, e embaixo o depósito com sete caixas. Cada caixa é um nó, com o código do produto e um código de barras EAN-13 na etiqueta.</p>
+                        <figure class="tela"><img src="img/topo.png?v=2026.11.25b" alt="Topo do simulador: logotipo do IF, título Estoque ABB, botões Simulador e Missões, Som desligado, Professor e Portal." loading="lazy" width="1280" height="66"><figcaption>O topo do simulador. <b>Simulador</b> e <b>Missões</b> trocam de tela; <b>Som</b> liga o bipe do leitor (opcional).</figcaption></figure>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="antes-3">
+                        <p class="faca">Ponha as duas janelas lado a lado: clique na janela da ficha e aperte <kbd>Windows</kbd> + <kbd>←</kbd>; depois clique no navegador e aperte <kbd>Windows</kbd> + <kbd>→</kbd>.</p>
+                        <p class="veja">Cada janela ocupa metade da tela. Se a tela for pequena, tudo bem alternar entre elas com <kbd>Alt</kbd> + <kbd>Tab</kbd>.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+
+                <div class="combinado">
+                    <h3>O combinado das previsões</h3>
+                    <p>Nas Partes A e B, escreva a sua previsão <b>antes</b> de usar o simulador. Errou? Não apague: escreva o certo em “No simulador” e explique o erro em uma frase. Uma previsão errada e explicada vale mais do que uma resposta copiada da tela, porque mostra como você pensou.</p>
+                </div>
+
+                <!-- Teste a regra: o aluno experimenta antes de começar -->
+                <div class="testa-regra" id="testa-regra">
+                    <h3>Teste a regra antes de começar</h3>
+                    <p>A raiz do catálogo é a caixa <b>45</b>. Digite um código e veja para que lado ele desce.</p>
+                    <form class="testa-form" id="testa-form" novalidate>
+                        <label for="testa-valor">Código</label>
+                        <input id="testa-valor" type="text" inputmode="numeric" maxlength="2" placeholder="0–99" autocomplete="off">
+                        <button class="botao botao-cheio" type="submit">Comparar com 45</button>
+                    </form>
+                    <p class="testa-saida" id="testa-saida" aria-live="polite">Experimente 30, 45 e 77.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="divisor" data-para="#parte-a" data-n="A" data-nome="O catálogo da loja" aria-hidden="true"></div>
+
+        <!-- ============ PARTE A ============ -->
+        <section id="parte-a" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="A">
+                    <div>
+                        <p class="etiqueta"><span>parte A</span></p>
+                        <h2 class="titulo" data-palavras>O catálogo da loja</h2>
+                    </div>
+                    <p class="cabecalho-desc">A loja cadastrou os códigos <code>[45, 20, 60, 10, 30, 50, 70]</code>, nessa ordem. Você vai prever a forma da árvore e conferir no simulador.</p>
+                </header>
+
+                <ol class="passos">
+                    <li class="passo" data-passo="a-1">
+                        <p class="faca"><b>Sem o simulador</b>, complete a tabela A1: para cada caixa, escreva quem fica à esquerda e quem fica à direita. Comece pelo 45 na raiz e cadastre os outros na ordem da lista.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte A › tabela A1</span> colunas “À esquerda” e “À direita” (escreva <code>vazio</code> onde não houver caixa).</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="a-2">
+                        <p class="faca">Ainda sem o simulador, responda A2 e A3 na coluna <b>Minha previsão</b>.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte A › A2 e A3</span> coluna “Minha previsão (antes)”.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="a-3">
+                        <p class="faca">No simulador, clique em <b>Catálogo da loja</b>, o primeiro botão da barra.</p>
+                        <figure class="tela"><img src="img/barra.png?v=2026.11.25b" alt="Barra do simulador: botões Catálogo da loja e Cadastro em ordem, visor do código, botões inserir, buscar e em_ordem, e Ver código e pilha." loading="lazy" width="1280" height="74"><figcaption>Da esquerda para a direita: os dois cenários, o visor <b>código</b> (onde você digita) e os botões <code>inserir</code>, <code>buscar</code> e <code>em_ordem</code>.</figcaption></figure>
+                        <p class="veja">A árvore aparece pronta. No alto do painel ficam os contadores <b>nós (produtos)</b> e <b>níveis (altura)</b>.</p>
+                        <figure class="tela"><img src="img/catalogo.png?v=2026.11.25b" alt="Depósito com a árvore do catálogo: 45 na raiz; 20 e 60 no segundo nível; 10, 30, 50 e 70 no terceiro. Contadores: 7 nós e 3 níveis." loading="lazy" width="1176" height="464"><figcaption>O catálogo da loja no simulador.</figcaption></figure>
+                        <p class="registre">Confira a sua tabela A1 com a tela. Tire um print (<kbd>Windows</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>, selecione a árvore) e cole com <kbd>Ctrl</kbd> + <kbd>V</kbd> em <span class="destino">Ficha › Parte A › caixa do print</span>.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="a-4">
+                        <p class="faca">Confira A2 olhando os contadores e as caixas sem nada embaixo. Para A3, digite <code>45</code> no visor <b>código</b> e clique em <code>inserir</code>. Depois clique em <b>Próximo passo</b> várias vezes (ou em <b>Ir ao resultado</b>).</p>
+                        <p class="veja">Uma caixa nova com o 45 desce pela árvore. Ao lado dela aparece cada comparação, por exemplo <code>45 = 45 → direita</code>. No quadro de baixo surge o <b>Resultado</b>, dizendo à esquerda ou à direita de qual caixa ela entrou.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte A › A2 e A3</span> colunas “No simulador” e, se errou, “Se errou, por quê?”.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+                <details class="socorro">
+                    <summary>Se algo não funcionar</summary>
+                    <p><b>A árvore está diferente da foto?</b> Clique em <b>Catálogo da loja</b> de novo: ele sempre recarrega os sete códigos originais.</p>
+                    <p><b>Os botões inserir e buscar estão apagados?</b> O visor <b>código</b> está vazio. Digite um número inteiro.</p>
+                    <p><b>O print não cola?</b> Depois de apertar <kbd>Windows</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>, a tela escurece: arraste o mouse por cima da árvore. Só então clique na ficha e aperte <kbd>Ctrl</kbd> + <kbd>V</kbd>.</p>
+                </details>
+            </div>
+        </section>
+
+        <div class="divisor" data-para="#parte-b" data-n="B" data-nome="Leitor e relatório" aria-hidden="true"></div>
+
+        <!-- ============ PARTE B ============ -->
+        <section id="parte-b" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="B">
+                    <div>
+                        <p class="etiqueta"><span>parte B</span></p>
+                        <h2 class="titulo" data-palavras>O leitor do caixa e o relatório</h2>
+                    </div>
+                    <p class="cabecalho-desc">Numa lista comum, o caixa conferiria produto por produto. Na árvore, cada comparação descarta um lado inteiro. Aqui você conta quantas caixas o leitor realmente olha.</p>
+                </header>
+
+                <ol class="passos">
+                    <li class="passo" data-passo="b-1">
+                        <p class="faca"><b>Sem o simulador</b>, responda B1 a B5 na coluna <b>Minha previsão</b>.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte B › B1 a B5</span> coluna “Minha previsão (antes)”.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="b-2">
+                        <p class="faca">No simulador, confira se o catálogo está na tela (se não, clique em <b>Catálogo da loja</b>). Digite <code>30</code> no visor e clique em <code>buscar</code>. Vá clicando em <b>Próximo passo</b>.</p>
+                        <p class="veja">Um leitor de código de barras passa de caixa em caixa com o laser vermelho. A caixa que está sendo lida fica com borda laranja, e ao lado aparece a comparação, como <code>30 &gt; 20 → direita</code>.</p>
+                        <figure class="tela"><img src="img/busca.png?v=2026.11.25b" alt="Busca pelo 30: o leitor está na caixa 20 e a legenda mostra 30 maior que 20, direita." loading="lazy" width="1176" height="464"><figcaption>A busca pelo 30 no meio do caminho: o leitor está na caixa 20.</figcaption></figure>
+                        <p class="veja">No fim, o quadro <b>Resultado</b> mostra o caminho completo e quantos nós foram visitados.</p>
+                        <figure class="tela tela-estreita"><img src="img/resultado.png?v=2026.11.25b" alt="Quadro de resultado: buscar(30): 45 → 20 → 30, 3 nós visitados, Encontrado." loading="lazy" width="1176" height="132"><figcaption>O resultado da busca pelo 30.</figcaption></figure>
+                        <p class="registre"><span class="destino">Ficha › Parte B › B1 e B2</span> coluna “No simulador”. Para B2, conte as caixas que o leitor nunca tocou.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="b-3">
+                        <p class="faca">Digite <code>55</code> e clique em <code>buscar</code>. Clique em <b>Ir ao resultado</b>.</p>
+                        <p class="veja">O leitor desce até encontrar um espaço vazio: é o <code>None</code>. O resultado diz <b>Não encontrado</b>.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte B › B3</span> coluna “No simulador”.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="b-4">
+                        <p class="faca">Clique em <code>em_ordem</code> e depois em <b>Ir ao resultado</b>.</p>
+                        <p class="veja">Cada caixa ganha um número laranja na ordem em que entrou no relatório. O resultado mostra a lista final.</p>
+                        <figure class="tela"><img src="img/em-ordem.png?v=2026.11.25b" alt="Percurso em ordem: caixas numeradas de 1 a 7, na ordem 10, 20, 30, 45, 50, 60, 70." loading="lazy" width="1176" height="464"><figcaption>Os números mostram a ordem do relatório: esquerda, a própria caixa, direita.</figcaption></figure>
+                        <p class="registre"><span class="destino">Ficha › Parte B › B4 e B5</span>. Em B5, explique com as suas palavras por que a lista sai em ordem crescente.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+                <details class="socorro">
+                    <summary>Se algo não funcionar</summary>
+                    <p><b>O botão Próximo passo ficou apagado?</b> A operação terminou. O resultado está no quadro de baixo.</p>
+                    <p><b>Apareceu uma pergunta “Sua vez” no quadro?</b> Responda clicando numa opção ou numa caixa; o simulador só segue depois da resposta.</p>
+                    <p><b>Quer ver a mesma busca de novo?</b> Clique em <b>←</b> <b>Voltar</b> ou no botão <b>↺</b> (volta ao início da operação).</p>
+                </details>
+            </div>
+        </section>
+
+        <div class="divisor" data-para="#parte-c" data-n="C" data-nome="Seus dois produtos" aria-hidden="true"></div>
+
+        <!-- ============ PARTE C ============ -->
+        <section id="parte-c" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="C">
+                    <div>
+                        <p class="etiqueta"><span>parte C</span></p>
+                        <h2 class="titulo" data-palavras>Seus dois produtos</h2>
+                    </div>
+                    <p class="cabecalho-desc">Agora a árvore é sua: você cadastra dois produtos novos e responde sobre o resultado. Cada aluno chega a uma árvore diferente.</p>
+                </header>
+
+                <ol class="passos">
+                    <li class="passo" data-passo="c-1">
+                        <p class="faca">Clique em <b>Catálogo da loja</b> para voltar à árvore original. Escolha dois números entre 1 e 99 que <b>não</b> estejam nela, por exemplo o dia do seu aniversário e a sua idade.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte C › coluna Código</span> do Produto 1 (X) e do Produto 2 (Y).</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="c-2">
+                        <p class="faca">Digite o código X e clique em <code>inserir</code>; depois <b>Ir ao resultado</b>. Faça o mesmo com Y.</p>
+                        <p class="veja">Cada caixa nova desce comparando e para num espaço vazio. O resultado diz “entrou à esquerda/direita do …”. Repare que o Y desce numa árvore que já tem o X.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte C › tabela</span> “Entrou à esquerda ou à direita de qual caixa?” e o print em <span class="destino">C1</span>.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="c-3">
+                        <p class="faca">Digite o código X de novo e clique em <code>buscar</code>, depois <b>Ir ao resultado</b>.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte C › C2</span> o caminho que o leitor percorreu e quantas caixas ele visitou.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+                <details class="socorro">
+                    <summary>Se algo não funcionar</summary>
+                    <p><b>Escolhi um número que já existia.</b> Sem problema: ele entra à direita do igual (a regra é “maior ou igual à direita”). Mas para esta parte escolha outro, que ainda não esteja na árvore.</p>
+                    <p><b>Cadastrei um número errado.</b> Clique em <b>Catálogo da loja</b> para recomeçar com os sete originais.</p>
+                </details>
+            </div>
+        </section>
+
+        <div class="divisor" data-para="#parte-d" data-n="D" data-nome="Cadastro em ordem" aria-hidden="true"></div>
+
+        <!-- ============ PARTE D ============ -->
+        <section id="parte-d" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="D">
+                    <div>
+                        <p class="etiqueta"><span>parte D</span></p>
+                        <h2 class="titulo" data-palavras>Cadastro em ordem crescente</h2>
+                    </div>
+                    <p class="cabecalho-desc">Os mesmos sete códigos, só que cadastrados do menor para o maior. A ordem de cadastro muda a forma da árvore, e a forma muda a velocidade da busca.</p>
+                </header>
+
+                <ol class="passos">
+                    <li class="passo" data-passo="d-1">
+                        <p class="faca">No simulador, clique em <b>Cadastro em ordem</b>, o segundo botão da barra.</p>
+                        <p class="veja">O simulador cadastra <code>[10, 20, 30, 45, 50, 60, 70]</code> nessa ordem e já deixa o <code>70</code> no visor. Os contadores mudam.</p>
+                        <figure class="tela"><img src="img/ordenado.png?v=2026.11.25b" alt="Árvore do cadastro em ordem: as sete caixas formam uma linha diagonal, cada uma à direita da anterior; 7 nós e 7 níveis." loading="lazy" width="1176" height="464"><figcaption>Compare a forma e os contadores com os da Parte A.</figcaption></figure>
+                        <p class="registre"><span class="destino">Ficha › Parte D › D1</span> descreva a forma em uma frase e cole o print.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="d-2">
+                        <p class="faca">Clique em <code>buscar</code> (o 70 já está no visor) e depois em <b>Ir ao resultado</b>. Em seguida clique em <code>em_ordem</code> e em <b>Ir ao resultado</b>.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte D › D2, D3 e D4</span>. Para a coluna “Catálogo da loja”, use os números que você já anotou nas Partes A e B.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ============ PARTE E (palco escuro) ============ -->
+        <section id="parte-e" class="secao secao-palco" data-cena="palco">
+            <div class="palco">
+                <div class="moldura">
+                    <header class="cabecalho" data-end="E">
+                        <div>
+                            <p class="etiqueta"><span>parte E</span></p>
+                            <h2 class="titulo" data-palavras>Missões</h2>
+                        </div>
+                        <p class="cabecalho-desc">Agora quem faz o trabalho da árvore é você. Cada rodada sorteia números novos e, no fim, o simulador imprime um cupom com os dados da sua rodada.</p>
+                    </header>
+
+                    <div class="missoes-grade">
+                        <ol class="passos passos-escuros">
+                            <li class="passo" data-passo="e-1">
+                                <p class="faca">No topo do simulador, clique em <b>Missões</b> (ou <a href="../simulador/?modo=missoes" target="_blank" rel="noopener">abra as Missões direto</a>).</p>
+                                <figure class="tela"><img src="img/missoes-abas.png?v=2026.11.25b" alt="Abas das missões: 1 Monte a árvore, 2 Ordem de visita, 3 Caminho da busca." loading="lazy" width="493" height="48"></figure>
+                                <label class="feito"><input type="checkbox"> feito</label>
+                            </li>
+                            <li class="passo" data-passo="e-2">
+                                <p class="faca"><b>1 · Monte a árvore</b>: os códigos chegam numa fila. Clique no espaço vazio (+) onde cada caixa deve ficar, um de cada vez.</p>
+                                <label class="feito"><input type="checkbox"> feito</label>
+                            </li>
+                            <li class="passo" data-passo="e-3">
+                                <p class="faca"><b>2 · Ordem de visita</b>: deixe marcado <code>em-ordem</code> e clique nas caixas na ordem em que elas entram no relatório.</p>
+                                <label class="feito"><input type="checkbox"> feito</label>
+                            </li>
+                            <li class="passo" data-passo="e-4">
+                                <p class="faca"><b>3 · Caminho da busca</b>: faça o papel do leitor. Clique nas caixas que a busca visita, em ordem. Se chegar a um espaço vazio, clique nele (é o <code>None</code>).</p>
+                                <label class="feito"><input type="checkbox"> feito</label>
+                            </li>
+                            <li class="passo" data-passo="e-5">
+                                <p class="veja">Ao terminar cada missão aparece o cupom ao lado, com o que foi sorteado, o resultado e o número de erros. Errar durante a missão faz parte: o simulador mostra a dica e, na segunda tentativa, pisca a resposta.</p>
+                                <p class="registre">Copie os dados do cupom para <span class="destino">Ficha › Parte E › tabela</span> e cole o print dos três cupons na caixa logo abaixo.</p>
+                                <label class="feito"><input type="checkbox"> feito</label>
+                            </li>
+                        </ol>
+                        <figure class="cupom-figura"><img src="img/cupom.png?v=2026.11.25b" alt="Cupom de comprovante da missão 3, Caminho da busca: valor buscado 14, encontrou: não, caminho 87, 52, 32, None, 3 erros, data e número do cupom com código de barras." loading="lazy" width="312" height="344"><figcaption>Exemplo de cupom (os números da sua rodada serão outros).</figcaption></figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ PARTE F ============ -->
+        <section id="parte-f" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="F">
+                    <div>
+                        <p class="etiqueta"><span>parte F</span></p>
+                        <h2 class="titulo" data-palavras>Para fechar</h2>
+                    </div>
+                    <p class="cabecalho-desc">Três perguntas curtas, com as suas palavras. Não há uma frase certa para copiar: vale o que você entendeu.</p>
+                </header>
+                <ol class="passos">
+                    <li class="passo" data-passo="f-1">
+                        <p class="faca">Responda as três perguntas da Parte F na ficha. Use o que você viu: quantas caixas o leitor olhou, a forma da árvore da Parte D, uma previsão que você corrigiu.</p>
+                        <p class="registre"><span class="destino">Ficha › Parte F › perguntas 1, 2 e 3</span>.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <div class="divisor" data-para="#entrega" data-n="↗" data-nome="Entrega" aria-hidden="true"></div>
+
+        <!-- ============ ENTREGA ============ -->
+        <section id="entrega" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="↗">
+                    <div>
+                        <p class="etiqueta"><span>entrega</span></p>
+                        <h2 class="titulo" data-palavras>Entregar no SIGAA</h2>
+                    </div>
+                    <p class="cabecalho-desc">Um arquivo só: a ficha preenchida, em .docx.</p>
+                </header>
+                <ol class="passos">
+                    <li class="passo" data-passo="ent-1">
+                        <p class="faca">Salve a ficha com o nome <code>ABB_SeuNome.docx</code>.</p>
+                        <p class="veja"><b>No Word</b>: <b>Arquivo › Salvar como</b> › escolha a pasta › nome › <b>Salvar</b>. <b>No LibreOffice</b>: <b>Arquivo › Salvar como</b> e, em “Tipo”, mantenha <b>Word 2007-365 (.docx)</b>; se perguntar o formato, clique em <b>Usar o formato Word</b>. <b>No Google Docs</b>: <b>Arquivo › Fazer download › Microsoft Word (.docx)</b>.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="ent-2">
+                        <p class="faca">Acesse o <a href="https://sigaa.ifpa.edu.br/sigaa/" target="_blank" rel="noopener">SIGAA</a>, entre com o seu login e abra a turma de Estrutura de Dados (<b>Portal do Discente › Minhas turmas</b>, ou o nome da turma na tela inicial).</p>
+                        <p class="veja">Abre a página da turma virtual, com o menu ao lado.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                    <li class="passo" data-passo="ent-3">
+                        <p class="faca">No menu da turma, clique em <b>Atividades › Tarefas</b>, escolha a tarefa do laboratório e clique em <b>Enviar</b> (em algumas versões, no ícone de envio ao lado da tarefa). Anexe o <code>ABB_SeuNome.docx</code> e confirme.</p>
+                        <p class="veja">O SIGAA mostra a mensagem de que a tarefa foi enviada. Se a tarefa permitir, você pode reenviar até o prazo, e só vale o último arquivo.</p>
+                        <label class="feito"><input type="checkbox"> feito</label>
+                    </li>
+                </ol>
+                <details class="socorro">
+                    <summary>A tarefa não aparece no SIGAA</summary>
+                    <p>Confira se abriu a turma certa de Estrutura de Dados. Se mesmo assim não aparecer, procure o professor antes do fim do prazo, com o arquivo já salvo.</p>
+                </details>
+            </div>
+        </section>
+
+        <!-- ============ TERMOS ============ -->
+        <section id="termos" class="secao" data-cena>
+            <div class="moldura">
+                <header class="cabecalho" data-end="?">
+                    <div>
+                        <p class="etiqueta"><span>termos e siglas</span></p>
+                        <h2 class="titulo" data-palavras>O que quer dizer</h2>
+                    </div>
+                    <p class="cabecalho-desc">Ao longo da página, as palavras sublinhadas com pontinhos mostram o significado quando você passa o mouse ou toca nelas.</p>
+                </header>
+                <dl class="termos" id="lista-termos"></dl>
+            </div>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <div class="rodape-inner">
+            <div class="rodape-marca"><p>Estrutura de Dados · Laboratório de árvore binária de busca</p></div>
+            <dl class="rodape-dados">
+                <div><dt>Docente</dt><dd>Prof. Ábner Lucas</dd></div>
+                <div><dt>Instituição</dt><dd>IFPA Campus Breves</dd></div>
+                <div><dt>Simulador</dt><dd><a href="../simulador/">Estoque ABB</a></dd></div>
+            </dl>
+        </div>
+    </footer>
+
+    <div class="balao" id="balao" role="tooltip" hidden></div>
+    <script src="glossario.js?v=2026.11.25b"></script>
+    <script src="laboratorio.js?v=2026.11.25b"></script>
+</body>
+</html>
