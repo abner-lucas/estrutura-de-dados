@@ -35,6 +35,9 @@ const CENARIOS: Record<CenarioId, { rotulo: string; dica: string; titulo: string
   ordenado: { rotulo: 'Cadastro em ordem', dica: 'Parte D', titulo: 'códigos cadastrados em ordem crescente', numeros: [10, 20, 30, 45, 50, 60, 70], valor: 70 },
 };
 
+// linha de apoio dos botões de percurso (todos com a mesma altura)
+const APOIO_PERCURSO: Record<TravKind, string> = { em_ordem: 'relatório', pre_ordem: 'raiz primeiro', pos_ordem: 'raiz por último' };
+
 const alturaDe = (t: Tree) => {
   const h = (id: Id | null): number => (id === null ? 0 : 1 + Math.max(h(t.nodes[id].esq), h(t.nodes[id].dir)));
   return h(t.root);
@@ -332,7 +335,7 @@ export function App() {
         <button className="btn op" onClick={() => op('buscar')} disabled={val === undefined || tree.root === null}><b>buscar</b><small>consultar</small></button>
         <span className="sep" />
         {travs.map((k) => (
-          <button key={k} className="btn op" onClick={() => op(k)} disabled={tree.root === null}><b>{k}</b>{k === 'em_ordem' && <small>relatório</small>}</button>
+          <button key={k} className="btn op" onClick={() => op(k)} disabled={tree.root === null}><b>{k}</b><small>{APOIO_PERCURSO[k]}</small></button>
         ))}
         {!foco && (
           <>
