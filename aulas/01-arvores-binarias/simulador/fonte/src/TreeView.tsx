@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { Id, Pending, Side, Slot, Tree } from './tracer';
 import { Barras, barras, eanDoCodigo } from './barras';
 
@@ -119,6 +119,9 @@ export interface TreeViewProps {
 }
 
 export function TreeView(p: TreeViewProps) {
+  // ids únicos por árvore: com várias árvores na página (missões), cada uma usa as suas definições
+  const uid = "tv" + useId().replace(/[^a-zA-Z0-9]/g, "");
+  const ref = (nome: string) => `url(#${uid}-${nome})`;
   const lay = useMemo(() => layoutTree(p.tree, p.pending), [p.tree, p.pending]);
   const targets: Record<string, Pos> = {};
   for (const [id, pos] of Object.entries(lay.pos)) targets['n' + id] = pos;
@@ -163,28 +166,28 @@ export function TreeView(p: TreeViewProps) {
   };
 
   return (
-    <svg className="tree" viewBox={`${cur.vb0.x} ${cur.vb0.y} ${cur.vb1.x} ${cur.vb1.y}`} preserveAspectRatio="xMidYMid meet">
+    <svg className="tree" style={{ ["--papelao" as string]: ref("papelao"), ["--sombra" as string]: ref("sombra") }} viewBox={`${cur.vb0.x} ${cur.vb0.y} ${cur.vb1.x} ${cur.vb1.y}`} preserveAspectRatio="xMidYMid meet">
       <defs>
-        <pattern id="piso" width="80" height="80" patternUnits="userSpaceOnUse">
+        <pattern id={uid + "-piso"} width="80" height="80" patternUnits="userSpaceOnUse">
           <rect width="80" height="80" fill="#E9EDF1" />
           <path d="M80 0H0V80" fill="none" stroke="#D9DFE6" strokeWidth="2" />
           <circle cx="40" cy="40" r="1.4" fill="#CBD3DC" />
         </pattern>
-        <linearGradient id="papelao" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={uid + "-papelao"} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#D9AE74" />
           <stop offset="1" stopColor="#BF8C52" />
         </linearGradient>
-        <filter id="sombra" x="-30%" y="-30%" width="160%" height="170%">
+        <filter id={uid + "-sombra"} x="-30%" y="-30%" width="160%" height="170%">
           <feDropShadow dx="0" dy="5" stdDeviation="3.5" floodColor="#0F1B2D" floodOpacity=".22" />
         </filter>
-        <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <marker id={uid + "-ar"} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="#6B7A8F" />
         </marker>
-        <marker id="arO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <marker id={uid + "-arO"} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="#FF6A45" />
         </marker>
       </defs>
-      <rect className="piso" x={cur.vb0.x - 4000} y={cur.vb0.y - 4000} width={cur.vb1.x + 8000} height={cur.vb1.y + 8000} fill="url(#piso)" />
+      <rect className="piso" x={cur.vb0.x - 4000} y={cur.vb0.y - 4000} width={cur.vb1.x + 8000} height={cur.vb1.y + 8000} fill={ref("piso")} />
 
       {/* ponteiro raiz_completa */}
       {rootId !== null ? (() => {
@@ -193,7 +196,7 @@ export function TreeView(p: TreeViewProps) {
         return (
           <g key={`rootptr-${isFlash ? p.flashKey : 'x'}`} className={`rootptr ${isFlash ? (p.flash!.same ? 'flash-same' : 'flash') : ''}`}>
             <text x={rp.x} y={rp.y - 50} textAnchor="middle">{p.rootLabel ?? 'raiz_completa'}</text>
-            <line x1={rp.x} y1={rp.y - 44} x2={rp.x} y2={rp.y - R - 4} markerEnd="url(#ar)" />
+            <line x1={rp.x} y1={rp.y - 44} x2={rp.x} y2={rp.y - R - 4} markerEnd={ref("ar")} />
           </g>
         );
       })() : p.emptyText ? (
@@ -207,7 +210,7 @@ export function TreeView(p: TreeViewProps) {
         const cls = e.pending ? 'edge pending' : isFlash ? (p.flash!.same ? 'edge flash-same' : 'edge flash') : 'edge';
         return (
           <g key={`${e.p}-${e.c}-${isFlash ? p.flashKey : ''}`}>
-            <line className={cls} {...c} markerEnd={e.pending ? 'url(#arO)' : 'url(#ar)'} />
+            <line className={cls} {...c} markerEnd={e.pending ? ref('arO') : ref('ar')} />
             {e.pending && <text className="pending-label" x={(c.x1 + c.x2) / 2 + (e.side === 'esq' ? -64 : 10)} y={(c.y1 + c.y2) / 2}>ainda não ligado</text>}
           </g>
         );

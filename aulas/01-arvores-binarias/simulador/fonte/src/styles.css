@@ -330,8 +330,8 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 .legend .lg-regra { margin-left: auto; font: 700 12.5px var(--mono); color: var(--green); background: #fff; padding: 2px 10px; border-radius: 6px; border: 1px solid var(--line); }
 
 /* caixa de produto */
-.node .caixa-g { filter: url(#sombra); }
-.node .caixa { fill: url(#papelao); stroke: #8A5A2B; stroke-width: 1.5; transition: stroke .2s, stroke-width .2s; }
+.node .caixa-g { filter: var(--sombra); }
+.node .caixa { fill: var(--papelao); stroke: #8A5A2B; stroke-width: 1.5; transition: stroke .2s, stroke-width .2s; }
 .node .fita { fill: #E8C88F; opacity: .85; }
 .node .etiqueta { fill: #fff; stroke: #CFD6DF; stroke-width: 1; transition: fill .25s; }
 .node .val { fill: #0F1B2D; font: 800 19px var(--mono); pointer-events: none; }
@@ -363,10 +363,10 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 /* valor em trânsito */
 .token .comparacao { font: 700 15px var(--mono); fill: #0F1B2D; paint-order: stroke; stroke: #E9EDF1; stroke-width: 5px; stroke-linejoin: round; }
 .token .tk-val { font: 800 15px var(--mono); fill: #0F1B2D; }
-.token.nova .caixa { fill: url(#papelao); stroke: #8A5A2B; stroke-width: 1.5; filter: url(#sombra); }
+.token.nova .caixa { fill: var(--papelao); stroke: #8A5A2B; stroke-width: 1.5; filter: var(--sombra); }
 .token.nova .fita { fill: #E8C88F; }
 .token.nova .etiqueta { fill: #fff; }
-.token .leitor path { fill: #1F2937; stroke: #0B1220; stroke-width: 1.5; filter: url(#sombra); }
+.token .leitor path { fill: #1F2937; stroke: #0B1220; stroke-width: 1.5; filter: var(--sombra); }
 .token .leitor .visor { fill: #0A1A12; }
 .token .leitor .tk-val { fill: #7CFFB2; font-size: 13px; }
 .token .laser { fill: rgba(255, 40, 40, .22); stroke: rgba(255, 40, 40, .55); stroke-width: 1; animation: laser .9s ease-in-out infinite; }
