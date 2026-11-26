@@ -77,13 +77,16 @@ add(
   item([t('No fim, salve em .docx com o nome '), cod('ABB_SeuNome.docx'), t(' e envie pelo SIGAA.')]),
 );
 
-// Parte A
+// Parte A — primeiro as previsões (sem simulador); depois a conferência no simulador
+// faixa colorida que separa as duas etapas: laranja = previsão, verde = simulador
+const etapa = (rotulo, partes, fundo) => tabela([LARG], [[cel([p([t(rotulo + '  ', { bold: true }), ...partes], { depois: 0 })], LARG, { fundo })]]);
 add(
   titulo('Parte A · O catálogo da loja'),
-  p([t('Códigos cadastrados, nesta ordem: '), cod('[45, 20, 60, 10, 30, 50, 70]')]),
-  p([t('No simulador: clique em '), t('Catálogo da loja', { bold: true }), t('. A árvore aparece pronta, com o total de nós e de níveis no alto do painel.')], { depois: 140 }),
+  p([t('Códigos cadastrados, nesta ordem: '), cod('[45, 20, 60, 10, 30, 50, 70]')], { depois: 120 }),
+  etapa('1º · Sem o simulador.', [t('Preencha A1, A2 e A3 na coluna '), t('Minha previsão', { bold: true }), t('. O simulador fica fechado até você terminar.')], COR.fundoPrev),
+  espaco(120),
   sub('A1 · Monte a árvore (previsão)'),
-  p([t('Antes de abrir o simulador, complete: para cada caixa, quem fica à esquerda e quem fica à direita. Escreva '), cod('vazio'), t(' quando não houver caixa.')]),
+  p([t('Comece pelo 45 na raiz e cadastre os outros na ordem da lista. Para cada caixa, escreva quem fica à esquerda e quem fica à direita. Escreva '), cod('vazio'), t(' quando não houver caixa.')]),
   (() => {
     const L = [2400, 3619, 3619];
     const nos = [45, 20, 60, 10, 30, 50, 70];
@@ -92,19 +95,26 @@ add(
       ...nos.map((n) => [cel([[cod(String(n))]], L[0]), vazia(L[1], 0, COR.fundoPrev), vazia(L[2], 0, COR.fundoPrev)]),
     ], [0, ...nos.map(() => 440)]);
   })(),
-  espaco(),
-  caixaPrint('Cole aqui o print da árvore do Catálogo da loja no simulador.', 2800),
   espaco(160),
+  sub('A2 e A3 · Previsão'),
   tabelaPrevisao([
     ['A2', [t('Quantos níveis (altura) a árvore tem? Quais códigos são folhas (caixas sem nada embaixo)?')]],
-    ['A3', [t('Se o código '), cod('45'), t(' for cadastrado de novo, onde ele vai parar? No simulador: digite '), cod('45'), t(' no campo código e clique em '), cod('inserir'), t('.')]],
+    ['A3', [t('Se o código '), cod('45'), t(' for cadastrado de novo, onde ele vai parar?')]],
   ]),
+  espaco(160),
+  etapa('2º · Agora, no simulador.', [
+    t('Clique em '), t('Catálogo da loja', { bold: true }), t(' e compare a árvore com a sua tabela A1. Confira A2 pelos contadores de nós e níveis. Para A3, digite '), cod('45'), t(' no campo código e clique em '), cod('inserir'),
+    t('. Preencha as colunas '), t('No simulador', { bold: true }), t(' e, se errou, '), t('Se errou, por quê?', { bold: true }), t(' (sem apagar a previsão).'),
+  ], COR.fundoSim),
+  espaco(),
+  caixaPrint('Cole aqui o print da árvore do Catálogo da loja no simulador.', 2800),
 );
 
-// Parte B
+// Parte B — de novo: previsão antes, simulador depois
 add(
   titulo('Parte B · O leitor do caixa e o relatório'),
-  p([t('Use a árvore da Parte A. Se ela mudou, clique de novo em '), t('Catálogo da loja', { bold: true }), t('. Para B1 a B3, digite o código e clique em '), cod('buscar'), t('. Para B4, clique em '), cod('em_ordem'), t('.')], { depois: 140 }),
+  etapa('1º · Sem o simulador.', [t('Responda B1 a B5 na coluna '), t('Minha previsão', { bold: true }), t(', pensando na árvore da Parte A.')], COR.fundoPrev),
+  espaco(120),
   tabelaPrevisao([
     ['B1', [t('O caixa busca o produto '), cod('30'), t('. Quais caixas o leitor visita, em ordem? Quantas foram?')]],
     ['B2', [t('Nessa busca pelo '), cod('30'), t(', quantas caixas nunca foram olhadas? Quais?')]],
@@ -112,6 +122,11 @@ add(
     ['B4', [t('O gerente pede o relatório com '), cod('em_ordem'), t('. Qual lista sai no final?')]],
     ['B5', [t('Em uma frase, com as suas palavras: por que o '), cod('em_ordem'), t(' sempre devolve os códigos em ordem crescente?')]],
   ]),
+  espaco(160),
+  etapa('2º · Agora, no simulador.', [
+    t('Use a árvore da Parte A (se ela mudou, clique de novo em '), t('Catálogo da loja', { bold: true }), t('). Para B1 a B3, digite o código e clique em '), cod('buscar'),
+    t('. Para B4, clique em '), cod('em_ordem'), t('. Preencha as colunas '), t('No simulador', { bold: true }), t(' e, se errou, '), t('Se errou, por quê?', { bold: true }), t('.'),
+  ], COR.fundoSim),
 );
 
 // Parte C
