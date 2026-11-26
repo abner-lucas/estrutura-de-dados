@@ -86,11 +86,11 @@ Conteúdo dos slides: `src/deck.tsx` · Animações: `src/remotion/` · Lógica 
 
 Em `aulas/01-arvores-binarias/laboratorio/`: página para o aluno com o passo a passo de cada parte (o que fazer, o que vai ver, onde registrar na ficha), glossário de termos e a **ficha do aluno em .docx**, entregue pelo SIGAA. Para mudar a ficha, edite `ferramentas/ficha-abb/gerar.cjs` e rode `npm install` e `npm run gerar` nessa pasta. As capturas de tela ficam em `laboratorio/img/`.
 
-**Conferir cupons das Missões (uso do professor):** `aulas/01-arvores-binarias/conferir/` (não aparece nos menus). Digite os dados do print do cupom e a página diz se o código confere e se os dados seguem as regras da árvore. A regra do código está em `conferir/codigo-cupom.mjs`, a mesma usada pelo simulador.
+**Conferir cupons das Missões (uso do professor):** `aulas/01-arvores-binarias/conferir/` (não aparece nos menus). Digite os dados da imagem do cupom e a página diz se o código confere e se os dados seguem as regras da árvore. A regra do código está em `conferir/codigo-cupom.mjs`, a mesma usada pelo simulador.
 
 ## 🧮 Simulador Estoque ABB
 
-Em `aulas/01-arvores-binarias/simulador/`. A árvore é o depósito de uma loja: cada nó é uma caixa com código de barras EAN-13 (JsBarcode), `inserir` traz uma caixa nova, `buscar` passa o leitor com laser e o bipe é opcional (Web Audio). As **Missões** terminam com um cupom de comprovante. Na visão **Ver código e pilha**, executa, linha por linha, o código Python da aula (`inserir`, `buscar`, `em_ordem`, `pre_ordem`, `pos_ordem`), mostrando a árvore, a linha atual, a pilha de chamadas, as variáveis e a saída do `print`, com perguntas de previsão e uma aba de desafios.
+Em `aulas/01-arvores-binarias/simulador/`. A árvore é o depósito de uma loja: cada nó é uma caixa com código de barras EAN-13 (JsBarcode), `inserir` traz uma caixa nova, `buscar` passa o leitor com laser e o bipe é opcional (Web Audio). As **Missões** terminam com um cupom de comprovante, já em imagem (arrastar ou "Copiar imagem"); o painel do depósito também tem "Copiar imagem" para a árvore. Trocar de aba entre as missões não apaga a rodada. Na visão **Ver código e pilha**, executa, linha por linha, o código Python da aula (`inserir`, `buscar`, `em_ordem`, `pre_ordem`, `pos_ordem`), mostrando a árvore, a linha atual, a pilha de chamadas, as variáveis e a saída do `print`, com perguntas de previsão e uma aba de desafios.
 
 Links prontos para a turma (também gerados pelo botão **⚙ Professor → Copiar link**):
 

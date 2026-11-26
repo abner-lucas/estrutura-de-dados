@@ -186,3 +186,9 @@ kbd.tecla-win { display: inline-flex; align-items: center; justify-content: cent
 kbd.tecla-win svg { width: 14px; height: 14px; fill: #0078D4; }
 [data-tema="escuro"] kbd.tecla-win svg { fill: #4CC2FF; }
 .lab-aviso { margin-top: 16px; padding: 10px 14px; border-left: 0; border-radius: 12px; background: var(--coral-suave); color: var(--tinta); font-size: .95rem; max-width: 36em; }
+/* aviso de guardar o cupom, no começo da Parte E */
+.guarde { margin-bottom: 22px; padding: 18px 22px; border-radius: 18px; background: rgba(242, 194, 48, .12); border: 1.5px solid var(--amarelo); color: var(--palco-tinta); }
+.guarde h3 { font-size: 1.15rem; color: var(--amarelo); margin-bottom: 6px; }
+.guarde p { color: var(--palco-tinta-2); }
+.guarde p + p { margin-top: 8px; }
+.guarde b { color: var(--palco-tinta); }

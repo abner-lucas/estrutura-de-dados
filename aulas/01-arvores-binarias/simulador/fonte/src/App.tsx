@@ -5,6 +5,8 @@ import { TreeView, slotKey, type Mark } from './TreeView';
 import { CodePanel, ConsolePanel, IfLogo, StackPanel, VarsPanel } from './panels';
 import { Challenges } from './Challenges';
 import { bipe, ligarSom, somLigado } from './som';
+import { arvorePng } from './imagem';
+import { BotoesImagem } from './BotoesImagem';
 
 type Nivel = 'nenhuma' | 'essenciais' | 'todas';
 type Visao = 'foco' | 'completo';
@@ -365,6 +367,8 @@ export function App() {
                 <span className="counter">nós (produtos) <b>{totalNos}</b></span>
                 <span className="counter">níveis (altura) <b>{niveis}</b></span>
               </span>
+              <BotoesImagem compacto nome={`arvore-${(run.title || 'deposito').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.png`}
+                gerar={() => arvorePng(document.querySelector('.tree-panel svg.tree') as SVGSVGElement, run.title, `nós ${totalNos} · níveis ${niveis}`)} />
             </h3>
             <TreeView tree={snap.tree} pending={snap.pending} flash={snap.flash} flashKey={idx} focus={focus} stack={stackIds}
               noneSlot={noneSlot} token={token} done={snap.done} appended={snap.appended} found={snap.found} badges={badges}

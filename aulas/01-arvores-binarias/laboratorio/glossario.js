@@ -24,7 +24,6 @@
         { termo: 'EAN-13', def: 'Padrão de código de barras de 13 dígitos usado nos produtos das lojas. Aparece nas etiquetas das caixas.' },
         { termo: 'SIGAA', def: 'Sistema Integrado de Gestão de Atividades Acadêmicas: onde você entrega a ficha.' },
         { termo: '.docx', def: 'Formato de arquivo do Word. Também abre no LibreOffice e no Google Docs.' },
-        { termo: 'print', variantes: ['prints'], def: 'Captura de tela: uma imagem do que está aparecendo no monitor.' },
     ];
 
     const escapar = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

@@ -43,8 +43,8 @@ function tabela(larguras, linhas, alturas = []) {
     rows: linhas.map((cels, i) => new TableRow({ children: cels, cantSplit: true, height: alturas[i] ? { value: alturas[i], rule: 'atLeast' } : undefined, tableHeader: i === 0 && alturas.headerRepeat })),
   });
 }
-// caixa grande para colar o print do simulador
-const caixaPrint = (rotulo, altura = 2600) => tabela([LARG], [[cel([p([t(rotulo, { color: COR.apoio, italics: true, size: 19 })], { depois: 0 })], LARG, { vAlign: VerticalAlign.TOP })]], [altura]);
+// caixa grande para colar a imagem copiada do simulador
+const caixaImagem = (rotulo, altura = 2600) => tabela([LARG], [[cel([p([t(rotulo, { color: COR.apoio, italics: true, size: 19 })], { depois: 0 })], LARG, { vAlign: VerticalAlign.TOP })]], [altura]);
 const espaco = (n = 120) => new Paragraph({ children: [], spacing: { after: n } });
 
 // tabela padrão das Partes A e B: pergunta | minha previsão | no simulador | se errou, por quê
@@ -73,7 +73,7 @@ add(
   sub('Como preencher'),
   item([t('Nas Partes A e B, escreva primeiro a coluna '), t('Minha previsão', { bold: true }), t(' sem usar o simulador. Só depois confira e preencha '), t('No simulador', { bold: true }), t('.')]),
   item([t('Errou a previsão? '), t('Não apague.', { bold: true }), t(' Deixe como estava, escreva o certo em "No simulador" e explique o erro em uma frase em "Se errou, por quê?". O erro explicado mostra o seu raciocínio.')]),
-  item([t('Onde a ficha pede um print: no Windows, aperte '), teclaWin(), t(' + Shift + S', { bold: true }), t(', selecione a área, clique no espaço indicado aqui na ficha e aperte '), t('Ctrl + V', { bold: true }), t('.')]),
+  item([t('Onde a ficha pede uma imagem: no simulador, clique em '), t('Copiar imagem', { bold: true }), t(' (no alto do painel do depósito ou embaixo do cupom), clique no espaço indicado aqui na ficha e aperte '), t('Ctrl + V', { bold: true }), t('. O cupom também pode ser arrastado com o mouse para dentro da ficha.')]),
   item([t('No fim, salve em .docx com o nome '), cod('ABB_SeuNome.docx'), t(' e envie pelo SIGAA.')]),
 );
 
@@ -107,7 +107,7 @@ add(
     t('. Preencha as colunas '), t('No simulador', { bold: true }), t(' e, se errou, '), t('Se errou, por quê?', { bold: true }), t(' (sem apagar a previsão).'),
   ], COR.fundoSim),
   espaco(),
-  caixaPrint('Cole aqui o print da árvore do Catálogo da loja no simulador.', 2800),
+  caixaImagem('Cole aqui a imagem da árvore do Catálogo da loja (Copiar imagem, no painel do depósito).', 2800),
 );
 
 // Parte B — de novo: previsão antes, simulador depois
@@ -142,7 +142,7 @@ add(
     ], [0, 560, 560]);
   })(),
   espaco(),
-  caixaPrint('C1 · Cole aqui o print da árvore já com os seus dois produtos.', 2800),
+  caixaImagem('C1 · Cole aqui a imagem da árvore já com os seus dois produtos (Copiar imagem).', 2800),
   espaco(),
   (() => {
     const L = [3000, 4638, 2000];
@@ -158,10 +158,10 @@ add(
   titulo('Parte D · Cadastro em ordem crescente'),
   p([t('Clique em '), t('Cadastro em ordem', { bold: true }), t('. O simulador cadastra os mesmos sete códigos da Parte A, um por um, do menor para o maior, e já deixa o '), cod('70'), t(' no campo código. Observe a forma da árvore, depois clique em '), cod('buscar'), t(' e em '), cod('em_ordem'), t('.')], { depois: 140 }),
   sub('D1 · A forma da árvore'),
-  p('Descreva em uma frase a forma que a árvore tomou e cole o print.'),
+  p('Descreva em uma frase a forma que a árvore tomou e cole a imagem da árvore (Copiar imagem).'),
   tabela([LARG], [[vazia(LARG)]], [620]),
   espaco(),
-  caixaPrint('Cole aqui o print da árvore do Cadastro em ordem.', 2600),
+  caixaImagem('Cole aqui a imagem da árvore do Cadastro em ordem.', 2600),
   espaco(160),
   (() => {
     const L = [700, 4338, 2300, 2300];
@@ -181,7 +181,9 @@ add(
 // Parte E
 add(
   titulo('Parte E · Missões'),
-  p([t('Clique em '), t('Missões', { bold: true }), t(' no topo do simulador e complete uma rodada de cada missão. Ao terminar, o simulador mostra um '), t('cupom', { bold: true }), t(' com os dados da sua rodada: copie para a tabela e cole o print de cada cupom. Errar durante a missão faz parte; o importante é chegar ao fim.')], { depois: 140 }),
+  etapa('Guarde cada cupom assim que ele aparecer.', [t('Ao terminar uma missão, o simulador mostra um '), t('cupom', { bold: true }), t(' já em imagem. Copie os dados para a tabela e leve a imagem para a caixa abaixo '), t('antes de passar para a próxima missão', { bold: true }), t(': o cupom some se você clicar em Nova rodada, voltar para a tela Simulador ou recarregar a página.')], COR.fundoAviso),
+  espaco(120),
+  p([t('Clique em '), t('Missões', { bold: true }), t(' no topo do simulador e complete uma rodada de cada missão. Errar durante a missão faz parte; o importante é chegar ao fim.')], { depois: 140 }),
   (() => {
     const L = [2200, 2700, 3338, 1400];
     const lin = (nome, sorteio, resultado) => [cel([[t(nome, { bold: true })]], L[0]), cel([p([t(sorteio, { color: COR.apoio, size: 19 })], { depois: 300 })], L[1], { vAlign: VerticalAlign.TOP }), cel([p([t(resultado, { color: COR.apoio, size: 19 })], { depois: 300 })], L[2], { vAlign: VerticalAlign.TOP }), vazia(L[3])];
@@ -193,7 +195,7 @@ add(
     ], [0, 1100, 1100, 1100]);
   })(),
   espaco(),
-  caixaPrint('Cole aqui o print dos três cupons (pode ser um embaixo do outro).', 3400),
+  caixaImagem('Cole ou arraste aqui as imagens dos três cupons (uma embaixo da outra).', 3400),
 );
 
 // Parte F

@@ -1,11 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TreeView, slotKey, type Mark } from './TreeView';
 import type { TravKind } from './code';
 import {
   emptyTree, finalSlot, insertPlain, pathText, REGRA, HINT, sameSlot, traverseIds, treeFrom,
   type Id, type Slot, type Tree,
 } from './tracer';
-import { BarrasSvg } from './barras';
+import { cupomPng } from './imagem';
+import { BotoesImagem } from './BotoesImagem';
 import { bipe } from './som';
 // a mesma regra usada pela página de conferência do professor (aulas/01-arvores-binarias/conferir/)
 import { codigoCupom } from '../../../conferir/codigo-cupom.mjs';
@@ -18,22 +19,21 @@ function Cupom({ missao, num, percurso, linhas }: { missao: string; num: 1 | 2 |
   const quando = useMemo(() => new Date(), []);
   const dataHora = quando.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
   const codigo = codigoCupom({ missao: num, percurso, campos: linhas.map((l) => l[1]), dataHora: quando });
+  const dados = useMemo(() => ({ missao, linhas, dataHora, codigo }), [codigo]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [url, setUrl] = useState<string | null>(null);
+  // o cupom é desenhado como imagem PNG: dá para arrastar para a ficha ou copiar
+  useEffect(() => {
+    let vivo = true, atual = '';
+    cupomPng(dados).then((b) => { if (vivo) { atual = URL.createObjectURL(b); setUrl(atual); } });
+    return () => { vivo = false; if (atual) URL.revokeObjectURL(atual); };
+  }, [dados]);
+  const descricao = `Comprovante da missão ${missao}: ${linhas.map(([k, v]) => `${k}: ${v}`).join('; ')}; ${dataHora}; número ${codigo}.`;
   return (
-    <div className="cupom" role="region" aria-label={`Comprovante da missão ${missao}`}>
-      <div className="cupom-topo">
-        <b>ESTOQUE ABB</b>
-        <span>Estrutura de Dados · IFPA Campus Breves</span>
-        <span>COMPROVANTE DE MISSÃO</span>
-      </div>
-      <div className="cupom-sep" />
-      <div className="cupom-missao">{missao}</div>
-      <dl>
-        {linhas.map(([k, v]) => (<div key={k}><dt>{k}</dt><dd>{v}</dd></div>))}
-      </dl>
-      <div className="cupom-sep" />
-      <div className="cupom-rodape"><span>{dataHora}</span><span>nº {codigo}</span></div>
-      <BarrasSvg valor={codigo} />
-      <p className="cupom-dica">Tire um print desta tela e cole na ficha, na Parte E.</p>
+    <div className="cupom-area">
+      {url ? <img className="cupom-img" src={url} alt={descricao} draggable title="Arraste esta imagem para a ficha" />
+        : <div className="cupom-carregando">imprimindo comprovante…</div>}
+      <BotoesImagem gerar={() => cupomPng(dados)} nome={`cupom-missao-${num}-${codigo}.png`} />
+      <p className="cupom-dica">Arraste a imagem para a ficha (Parte E) ou clique em <b>Copiar imagem</b> e cole com Ctrl + V.</p>
     </div>
   );
 }
@@ -88,12 +88,10 @@ function Montar({ onShowCode, som }: { onShowCode: (nums: number[]) => void; som
       setErrs(errs + 1); setTries(n);
       if (som) bipe('nao');
       setWrong({ type: 'slot', id: slotKey(s), nonce: Date.now() });
-      if (n >= 2) {
-        setReveal({ type: 'slot', id: slotKey(exp), nonce: Date.now() });
-        setMsg({ ok: false, text: `Veja o caminho completo: ${pathText(t, v)}. O espaço certo está piscando.` });
-      } else {
-        setMsg({ ok: false, text: `Não é aí. Sempre comece pela raiz: ${pathText(t, v, 1)} …` });
-      }
+      // só a regra: o aluno refaz as comparações sozinho
+      setMsg({ ok: false, text: n >= 2
+        ? `Ainda não. Refaça devagar: compare o ${v} com a raiz e, em cada caixa, menor vai para a esquerda, maior ou igual para a direita, até achar um espaço vazio.`
+        : `Não é aí. Comece pela raiz e compare o ${v} com cada caixa: menor ← | → maior ou igual.` });
     }
   };
 
@@ -148,10 +146,7 @@ function Percurso({ som }: { som: boolean }) {
       setErrs(errs + 1); setTries(n);
       if (som) bipe('nao');
       setWrong({ type: 'node', id: String(id), nonce: Date.now() });
-      if (n >= 2) {
-        setReveal({ type: 'node', id: String(order[k]), nonce: Date.now() });
-        setMsg({ ok: false, text: `O próximo é o ${t.nodes[order[k]].valor} (piscando). ${HINT[kind]}` });
-      } else setMsg({ ok: false, text: `Ainda não. ${HINT[kind]}` });
+      setMsg({ ok: false, text: `Ainda não. ${HINT[kind]}` });
     }
   };
 
@@ -224,13 +219,14 @@ function Busca({ som }: { som: boolean }) {
     const n = tries + 1;
     setErrs(errs + 1); setTries(n); setWrong(mark);
     if (som) bipe('nao');
-    if (n >= 2) { setReveal(certo); setMsg({ ok: false, text: `O próximo passo está piscando. ${dica}` }); }
-    else setMsg({ ok: false, text: dica });
+    void certo; void n; // nada é revelado: só a regra
+    setMsg({ ok: false, text: dica });
   };
   const certoAgora = (): Mark => (k < caminho.ids.length
     ? { type: 'node', id: String(caminho.ids[k]), nonce: Date.now() }
     : { type: 'slot', id: slotKey(caminho.fimSlot!), nonce: Date.now() });
-  const dica = () => (ultimo === null ? 'Toda busca começa pela raiz.' : `Compare: ${t.nodes[ultimo].valor} > ${alvo}? ${t.nodes[ultimo].valor > alvo ? 'Sim → esquerda.' : 'Não → direita.'}`);
+  // a dica lembra a regra sem fazer a comparação pelo aluno
+  const dica = () => (ultimo === null ? 'Ainda não. Toda busca começa pela raiz.' : `Ainda não. Compare o ${alvo} com o ${t.nodes[ultimo].valor}: menor vai para a esquerda, maior ou igual para a direita. Se o lado estiver vazio, é o None.`);
 
   const clickNode = (id: Id) => {
     if (fim || caminho.ids.slice(0, k).includes(id)) return;
@@ -283,7 +279,11 @@ export function Challenges({ onShowCode, som }: { onShowCode: (nums: number[]) =
         <button className={kind === 'percurso' ? 'on' : ''} onClick={() => setKind('percurso')}>2 · Ordem de visita</button>
         <button className={kind === 'busca' ? 'on' : ''} onClick={() => setKind('busca')}>3 · Caminho da busca</button>
       </nav>
-      {kind === 'montar' ? <Montar onShowCode={onShowCode} som={som} /> : kind === 'percurso' ? <Percurso som={som} /> : <Busca som={som} />}
+      {/* as três ficam montadas: trocar de aba não apaga a rodada nem o cupom
+          (só recomeçam ao recarregar a página, voltar ao Simulador ou clicar em Nova rodada) */}
+      <div className="ch-painel" hidden={kind !== 'montar'}><Montar onShowCode={onShowCode} som={som} /></div>
+      <div className="ch-painel" hidden={kind !== 'percurso'}><Percurso som={som} /></div>
+      <div className="ch-painel" hidden={kind !== 'busca'}><Busca som={som} /></div>
     </div>
   );
 }
