@@ -147,8 +147,8 @@ add(
   (() => {
     const L = [3000, 4638, 2000];
     return tabela(L, [
-      [cel('C2 · Busca pelo produto X', L[0], { bold: true, fundo: COR.fundoCab }), cel('Caminho que o leitor percorreu', L[1], { bold: true, fundo: COR.fundoCab }), cel('Caixas visitadas', L[2], { bold: true, fundo: COR.fundoCab })],
-      [cel('Digite X e clique em buscar.', L[0], { cor: COR.apoio, size: 19 }), vazia(L[1]), vazia(L[2])],
+      [cel(new Paragraph({ keepNext: true, spacing: { after: 0 }, children: [t('C2 · Busca pelo seu Produto 1 (X)', { bold: true })] }), L[0], { fundo: COR.fundoCab }), cel(new Paragraph({ keepNext: true, spacing: { after: 0 }, children: [t('Caminho que o leitor percorreu', { bold: true })] }), L[1], { fundo: COR.fundoCab }), cel(new Paragraph({ keepNext: true, spacing: { after: 0 }, children: [t('Caixas visitadas', { bold: true })] }), L[2], { fundo: COR.fundoCab })],
+      [cel('No campo código, digite de novo o número do seu Produto 1 (X), o mesmo que você escreveu na tabela acima, e clique em buscar.', L[0], { cor: COR.apoio, size: 19 }), vazia(L[1]), vazia(L[2])],
     ], [0, 700]);
   })(),
 );
